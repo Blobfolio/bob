@@ -85,8 +85,8 @@ class dpkg extends \blobfolio\bob\base\binary {
 		// Compile the command.
 		if (false === ($cmd = $this->get_command(array(
 			'--build',
-			'"' . $dir . '"',
-			'"' . $deb . '"',
+			escapeshellarg($dir),
+			escapeshellarg($deb),
 		)))) {
 			utility::log('Could not build CLI command.', 'error');
 			return false;

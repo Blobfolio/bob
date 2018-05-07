@@ -53,10 +53,10 @@ class phpab extends \blobfolio\bob\base\binary {
 
 		// Compile the command.
 		if (false === ($cmd = $this->get_command(array(
-			"-e \"{$dir}node_modules/*\"",
+			'-e ' . escapeshellarg("{$dir}node_modules/*"),
 			'--tolerant',
-			"-o \"$file\"",
-			"\"{$dir}\"",
+			'-o ' . escapeshellarg($file),
+			escapeshellarg($dir),
 		)))) {
 			utility::log('CLI command (probably) failed.', 'error', true);
 			return false;

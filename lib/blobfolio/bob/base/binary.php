@@ -118,7 +118,7 @@ abstract class binary {
 			$args = implode(' ', $args);
 			r_sanitize::whitespace($args);
 			if ($args) {
-				$out[] = escapeshellarg($args);
+				$out[] = $args;
 			}
 		}
 
