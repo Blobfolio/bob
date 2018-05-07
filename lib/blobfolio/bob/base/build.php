@@ -252,7 +252,7 @@ abstract class build {
 	 * @return void Nothing.
 	 */
 	protected static function make_working() {
-		static::$working_dir = utility::get_tmp_dir . basename(static::SOURCE_DIR) . '/';
+		static::$working_dir = utility::get_tmp_dir() . basename(static::SOURCE_DIR) . '/';
 		utility::copy(static::SOURCE_DIR, static::$working_dir);
 	}
 
