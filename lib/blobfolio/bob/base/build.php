@@ -14,6 +14,7 @@ namespace blobfolio\bob\base;
 use \blobfolio\bob\utility;
 use \blobfolio\common\cli;
 use \blobfolio\common\file as v_file;
+use \blobfolio\common\ref\file as r_file;
 
 abstract class build {
 	// The package name.
@@ -171,7 +172,14 @@ abstract class build {
 				utility::log("Invalid binary: $v", 'error', false);
 			}
 
-			static::$deps[basename($v)] = new $v();
+			$nicename = $v;
+			r_file::unixslash($nicename);
+			if (false !== strpos($nicename, '/')) {
+				r_file::untrailingslash($nicename);
+				r_file::unleadingslash($nicename);
+				$nicename = basename($nicename);
+			}
+			static::$deps[$nicename] = new $v();
 		}
 
 		print_r(static::$deps);
