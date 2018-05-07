@@ -33,12 +33,13 @@ class utility {
 	// File/directory patterns to ignore.
 	const SHITLIST = array(
 		'/\.(_*)DS_Store$/',
+		'/\.eslintrc\.json$/',
 		'/\.git(attributes|ignore)?$/',
 		'/\.htaccess$/',
 		'/\.sass-cache/',
-		'/node_modules/',
 		'/composer\.(json|lock)$/',
 		'/Gruntfile\.js$/',
+		'/node_modules/',
 		'/package(\-lock)?\.json$/',
 		'/phpunit/',
 		'/readme\.md$/i',
