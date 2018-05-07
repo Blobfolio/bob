@@ -181,9 +181,6 @@ abstract class build {
 			}
 			static::$deps[$nicename] = new $v();
 		}
-
-		print_r(static::$deps);
-		exit;
 	}
 
 	/**
