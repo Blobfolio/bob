@@ -274,8 +274,17 @@ abstract class build {
 	 * @return void Nothing.
 	 */
 	protected static function make_working() {
-		static::$working_dir = utility::get_tmp_dir() . basename(static::SOURCE_DIR) . '/';
-		utility::copy(static::SOURCE_DIR, static::$working_dir);
+		// Copy the source directory.
+		if (static::SOURCE_DIR) {
+			static::$working_dir = utility::get_tmp_dir() . basename(static::SOURCE_DIR) . '/';
+			utility::copy(static::SOURCE_DIR, static::$working_dir);
+		}
+		// If there is no source directory, go ahead and make a
+		// randomly-named subdirectory for use.
+		else {
+			static::$working_dir = utility::get_tmp_dir() . md5(microtime(true)) . '/';
+			v_file::mkdir(static::$working_dir, 0755);
+		}
 	}
 
 	/**
