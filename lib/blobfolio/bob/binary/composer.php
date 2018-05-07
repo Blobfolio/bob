@@ -80,8 +80,6 @@ class composer extends \blobfolio\bob\base\binary {
 			return false;
 		}
 
-		echo "\n$cmd\n"; exit;
-
 		// Try to execute it!
 		$out = $this->exec($cmd, $dir);
 
