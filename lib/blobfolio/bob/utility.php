@@ -332,8 +332,6 @@ class utility {
 		}
 		sort($tmp);
 
-		print_r($tmp); exit;
-
 		// Look for hits.
 		foreach ($tmp as $v) {
 			if (preg_match($v, $file)) {
