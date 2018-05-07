@@ -122,7 +122,9 @@ abstract class binary {
 			}
 		}
 
-		return implode(' ', $out);
+		$out = implode(' ', $out);
+		r_sanitize::whitespace($out);
+		return $out;
 	}
 
 	/**
