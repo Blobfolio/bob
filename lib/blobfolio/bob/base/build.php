@@ -196,7 +196,7 @@ abstract class build {
 	/**
 	 * Pre-Files
 	 *
-	 * This runs before automatic binary population.
+	 * This runs before required file checks.
 	 *
 	 * @return void Nothing.
 	 */
@@ -220,7 +220,7 @@ abstract class build {
 	/**
 	 * Post-Files
 	 *
-	 * This runs after automatic binary population.
+	 * This runs after automatic file checks.
 	 *
 	 * @return void Nothing.
 	 */
