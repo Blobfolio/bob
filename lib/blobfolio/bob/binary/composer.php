@@ -13,7 +13,7 @@ namespace blobfolio\bob\binary;
 use \blobfolio\bob\utility;
 use \blobfolio\common\ref\file as r_file;
 
-class composer extends \blobfolio\bob\base {
+class composer extends \blobfolio\bob\base\binary {
 	const NAME = 'Composer';
 	const REMOTE = 'https://getcomposer.org/composer.phar';
 

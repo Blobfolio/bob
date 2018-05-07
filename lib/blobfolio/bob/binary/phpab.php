@@ -13,7 +13,7 @@ namespace blobfolio\bob\binary;
 use \blobfolio\bob\utility;
 use \blobfolio\common\ref\file as r_file;
 
-class phpab extends \blobfolio\bob\base {
+class phpab extends \blobfolio\bob\base\binary {
 	const NAME = 'phpab';
 	const REMOTE = 'https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar';
 

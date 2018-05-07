@@ -13,7 +13,7 @@ namespace blobfolio\bob\binary;
 use \blobfolio\bob\utility;
 use \blobfolio\common\ref\file as r_file;
 
-class dpkg extends \blobfolio\bob\base {
+class dpkg extends \blobfolio\bob\base\binary {
 	const NAME = 'dpkg-deb';
 
 
