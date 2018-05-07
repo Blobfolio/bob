@@ -110,7 +110,7 @@ abstract class binary {
 		}
 
 		// Append our actual command.
-		$out[] = escapeshellcmd($this->tool);
+		$out[] = escapeshellcmd($this->binary);
 
 		if (!is_null($args)) {
 			r_cast::array($args);
