@@ -1,0 +1,40 @@
+{
+  "name": "bob",
+  "description": "A simple release builder framework.",
+  "version": "0.5.0",
+  "type": "library",
+  "homepage": "https:\/\/blobfolio.com\/",
+  "license": "WTFPL",
+  "authors": [
+    {
+      "name": "Josh Stoik",
+      "email": "josh@blobfolio.com",
+      "homepage": "https:\/\/blobfolio.com"
+    }
+  ],
+  "require": {
+    "php": ">= 7.0",
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-filter": "*",
+    "ext-hash": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-zip": "*",
+
+    "blobfolio\/blob-common": "dev-7.0_Next",
+    "blobfolio\/blob-mimes": "dev-7.0_Next",
+    "blobfolio\/blob-phone": "dev-7.0_Next",
+    "blobfolio\/blob-domain": "dev-7.0_Next"
+  },
+  "config": {
+    "vendor-dir": "lib\/vendor",
+    "preferred-install": "dist"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "blobfolio\\bob\\":"lib\/blobfolio\/bob"},
+    "files":[]
+  }
+}
