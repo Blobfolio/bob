@@ -332,6 +332,8 @@ class utility {
 		}
 		sort($tmp);
 
+		print_r($tmp); exit;
+
 		// Look for hits.
 		foreach ($tmp as $v) {
 			if (preg_match($v, $file)) {
@@ -617,7 +619,7 @@ class utility {
 	 */
 	public static function prompt(string $question, bool $required=false, string $default='') {
 		if ($default) {
-			$question .= " [$default]";
+			$question .= " \033[2m[$default]\033[0m";
 		}
 		r_sanitize::whitespace($question);
 
