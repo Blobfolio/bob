@@ -187,7 +187,7 @@ class utility {
 		}
 
 		// Process the URLs in chunks.
-		$urls = array_cunk($urls, static::REMOTE_CHUNK);
+		$urls = array_chunk($urls, static::REMOTE_CHUNK);
 		foreach ($urls as $chunk) {
 			$multi = curl_multi_init();
 			$curls = array();
