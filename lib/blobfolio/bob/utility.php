@@ -425,7 +425,7 @@ class utility {
 					}
 
 					// Recurse.
-					static::copy("{$from}{$file}", "{$to}{$file}");
+					static::copy("{$from}{$file}", "{$to}{$file}", $shitlist);
 				}
 				closedir($handle);
 			}
