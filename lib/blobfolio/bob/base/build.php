@@ -58,7 +58,7 @@ abstract class build {
 	 *
 	 * @return void Nothing.
 	 */
-	public static function run() {
+	public static function compile() {
 		$start = microtime(true);
 
 		// Require CLI mode.
