@@ -36,7 +36,7 @@ class utility {
 		'/\.git(attributes|ignore)?$/',
 		'/\.htaccess$/',
 		'/\.sass-cache/',
-		'/\node_modules/',
+		'/node_modules/',
 		'/composer\.(json|lock)$/',
 		'/Gruntfile\.js$/',
 		'/package(\-lock)?\.json$/',
