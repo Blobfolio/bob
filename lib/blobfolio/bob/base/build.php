@@ -25,6 +25,8 @@ abstract class build {
 
 	// The source directory.
 	const SOURCE_DIR = '';
+	const COMPOSER_CONFIG = '';
+	const PHPAB_AUTOLOADER = '';
 
 	// Type of release: zip, deb, copy.
 	const RELEASE_TYPE = '';
