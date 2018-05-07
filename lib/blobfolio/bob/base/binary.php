@@ -45,7 +45,6 @@ abstract class binary {
 
 		// See if we can get it.
 		$tmp = utility::get_remote(static::REMOTE);
-		print_r($tmp); exit;
 		if (!isset($tmp[0]) || (false === $tmp[0])) {
 			utility::log('Download failed.', 'error', true);
 		}
