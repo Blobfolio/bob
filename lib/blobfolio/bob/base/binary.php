@@ -143,8 +143,6 @@ abstract class binary {
 			}
 		}
 
-		echo "\n$cmd\n"; return true;
-
 		// Change the directory.
 		if ($cwd) {
 			$old_cwd = getcwd();
