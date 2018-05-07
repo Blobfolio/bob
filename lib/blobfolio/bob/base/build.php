@@ -328,7 +328,7 @@ abstract class build {
 	 *
 	 * @return void Nothing.
 	 */
-	protected static function pre_clean_tasks() {
+	protected static function pre_clean() {
 	}
 
 	/**
@@ -336,7 +336,7 @@ abstract class build {
 	 *
 	 * @return void Nothing.
 	 */
-	protected static function clean_tasks() {
+	protected static function clean() {
 		if (static::$working_dir && file_exists(static::$working_dir)) {
 			utility::log('Removing working directory…');
 			v_file::rmdir(static::$working_dir);
@@ -348,7 +348,7 @@ abstract class build {
 	 *
 	 * @return void Nothing.
 	 */
-	protected static function post_clean_tasks() {
+	protected static function post_clean() {
 	}
 
 	// ----------------------------------------------------------------- end cleanup
