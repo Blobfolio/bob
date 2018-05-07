@@ -176,7 +176,7 @@ class utility {
 		// Let's go ahead and get what we can from cache.
 		foreach ($urls as $k=>$v) {
 			if (false !== ($cache = static::get_cache($v))) {
-				$out[$v] = $cache;
+				$out[$v] = static::get_cache_key($url);
 				unset($urls[$k]);
 			}
 		}
