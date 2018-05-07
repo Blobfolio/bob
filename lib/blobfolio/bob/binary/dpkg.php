@@ -40,13 +40,8 @@ class dpkg extends \blobfolio\bob\base\binary {
 			define('BOB_DPKG_BINARY', $tmp);
 		}
 
-		if (is_file(BOB_DPKG_BINARY)) {
-			$this->binary = BOB_DPKG_BINARY;
-			return true;
-		}
-		else {
-			utility::log('dpkg-deb could not be found.', 'error', true);
-		}
+		$this->binary = BOB_DPKG_BINARY;
+		return true;
 	}
 
 	// ----------------------------------------------------------------- end setup

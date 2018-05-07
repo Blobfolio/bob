@@ -40,13 +40,8 @@ class grunt extends \blobfolio\bob\base\binary {
 			define('BOB_GRUNT_BINARY', $tmp);
 		}
 
-		if (is_file(BOB_GRUNT_BINARY)) {
-			$this->binary = BOB_GRUNT_BINARY;
-			return true;
-		}
-		else {
-			utility::log('Grunt could not be found.', 'error', true);
-		}
+		$this->binary = BOB_GRUNT_BINARY;
+		return true;
 	}
 
 	// ----------------------------------------------------------------- end setup

@@ -71,7 +71,10 @@ abstract class binary {
 	 * @return bool True/false.
 	 */
 	public function exists() {
-		return !is_null($this->binary) && is_file($this->binary);
+		return (
+			!is_null($this->binary) &&
+			((false === strpos($this->binary, '/')) || is_file($this->binary))
+		);
 	}
 
 	// ----------------------------------------------------------------- end setup
