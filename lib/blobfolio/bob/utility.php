@@ -33,6 +33,7 @@ class utility {
 	// File/directory patterns to ignore.
 	const SHITLIST = array(
 		'/\.(_*)DS_Store$/',
+		'/\.babelrc$/',
 		'/\.eslintrc\.json$/',
 		'/\.git(attributes|ignore)?$/',
 		'/\.htaccess$/',
@@ -46,6 +47,7 @@ class utility {
 		'/vendor\/(autoload.php|bin|composer)/',
 		'/vendor\/.*\.(markdown|md|yml)$/',
 		'/vendor\/[^\/+]\/(build\.xml|tests?)/',
+		'/yarn\.lock$/',
 	);
 
 	protected static $mtime;
