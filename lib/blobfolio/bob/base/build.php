@@ -135,6 +135,7 @@ abstract class build {
 		$elapsed = round($end - $start, 3);
 		utility::log('DONE!', 'header');
 		utility::log("Finished in $elapsed seconds.", 'success');
+		echo "\n\n";
 	}
 
 	// ----------------------------------------------------------------- end setup
