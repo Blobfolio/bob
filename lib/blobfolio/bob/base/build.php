@@ -173,6 +173,9 @@ abstract class build {
 
 			static::$deps[basename($v)] = new $v();
 		}
+
+		print_r(static::$deps);
+		exit;
 	}
 
 	/**
