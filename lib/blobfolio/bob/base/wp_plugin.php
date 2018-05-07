@@ -38,6 +38,9 @@ abstract class wp_plugin {
 	// Compress any files?
 	const RELEASE_COMPRESS = array();
 
+	// Extra shitlist.
+	const SHITLIST = array();
+
 	// Binary dependencies. The values should be callable.
 	const BINARIES = array(
 		'composer',
@@ -317,11 +320,11 @@ abstract class wp_plugin {
 	 */
 	protected static function make_working() {
 		static::$working_dir = utility::get_tmp_dir . basename(static::SOURCE_DIR) . '/';
-		utility::copy(static::SOURCE_DIR, static::$working_dir);
+		utility::copy(static::SOURCE_DIR, static::$working_dir, static::SHITLIST);
 
 		// Fix permissions.
 		utility::log('Fixing permissions…');
-		$files = v_file::scandir(static::$working_dir);
+		$files = v_file::scandir(static::$working_dir, static::SHITLIST);
 		foreach ($files as $v) {
 			if (is_dir($v)) {
 				chmod($v, 0755);

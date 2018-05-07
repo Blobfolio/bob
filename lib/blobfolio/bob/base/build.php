@@ -38,6 +38,9 @@ abstract class build {
 	// File dependencies. The values should be paths.
 	const FILES = array();
 
+	// Extra shitlist.
+	const SHITLIST = array();
+
 	// Binaries we might be using.
 	protected static $deps = array();
 
