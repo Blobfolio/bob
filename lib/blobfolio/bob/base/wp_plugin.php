@@ -255,34 +255,11 @@ abstract class wp_plugin {
 	 * @return void Nothing.
 	 */
 	protected static function make_working() {
-		static::$working_dir = utility::get_tmp_dir . basename(static::SOURCE_DIR) . '/';
-		utility::copy(static::SOURCE_DIR, static::$working_dir, static::SHITLIST);
-
-		// Fix permissions.
-		utility::log('Fixing permissions…');
-		$files = v_file::scandir(static::$working_dir, static::SHITLIST);
-		foreach ($files as $v) {
-			if (is_dir($v)) {
-				chmod($v, 0755);
-			}
-			else {
-				chmod($v, 0644);
-			}
-		}
-
-		// Compress PHP.
-		if (count(static::RELEASE_COMPRESS)) {
-			utility::log('Compressing PHP scripts…');
-			foreach (static::RELEASE_COMPRESS as $v) {
-				utility::compress_php($v);
-			}
-		}
-
 		// Patch version.
 		$version = false;
-		if (is_file(static::$working_dir . 'index.php')) {
+		if (is_file(static::SOURCE_DIR . 'index.php')) {
 			utility::log('Finding current version…');
-			$tmp = file_get_contents(static::$working_dir . 'index.php');
+			$tmp = file_get_contents(static::SOURCE_DIR . 'index.php');
 			if (preg_match('/@version\s+([\d\.\-]+)/', $tmp, $match)) {
 				$version = $match[1];
 			}
@@ -305,11 +282,11 @@ abstract class wp_plugin {
 			utility::log('Patching version…');
 
 			// Most plugins will have version info in the index headers.
-			if (is_file(static::$working_dir . 'index.php')) {
-				$tmp = file_get_contents(static::$working_dir . 'index.php');
+			if (is_file(static::SOURCE_DIR . 'index.php')) {
+				$tmp = file_get_contents(static::SOURCE_DIR . 'index.php');
 				$tmp = preg_replace('/@version\s+[\d\.\-]+/', "@version $new_version", $tmp);
 				$tmp = preg_replace('/\* Version:\s+[\d\.\-]+/', "* Version: $new_version", $tmp);
-				file_put_contents(static::$working_dir . 'index.php', $tmp);
+				file_put_contents(static::SOURCE_DIR . 'index.php', $tmp);
 			}
 
 			// A lot of plugins have a release info file next to the
@@ -328,6 +305,30 @@ abstract class wp_plugin {
 
 			// In case there's any other weird stuff to do.
 			static::patch_version($new_version);
+		}
+
+		static::$working_dir = utility::get_tmp_dir . basename(static::SOURCE_DIR) . '/';
+		utility::copy(static::SOURCE_DIR, static::$working_dir, static::SHITLIST);
+
+		// Fix permissions.
+		utility::log('Fixing permissions…');
+		$files = v_file::scandir(static::$working_dir, static::SHITLIST);
+		foreach ($files as $v) {
+			if (is_dir($v)) {
+				chmod($v, 0755);
+			}
+			else {
+				chmod($v, 0644);
+			}
+		}
+
+		// Compress PHP.
+		if (count(static::RELEASE_COMPRESS)) {
+			utility::log('Compressing PHP scripts…');
+			foreach (static::RELEASE_COMPRESS as $v) {
+				$v = str_replace('%TMP%', static::$working_dir);
+				utility::compress_php($v);
+			}
 		}
 	}
 
