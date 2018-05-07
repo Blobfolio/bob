@@ -312,7 +312,7 @@ abstract class wp_plugin extends build {
 
 		// Fix permissions.
 		utility::log('Fixing permissions…');
-		$files = v_file::scandir(static::$working_dir, static::SHITLIST);
+		$files = v_file::scandir(static::$working_dir);
 		foreach ($files as $v) {
 			if (is_dir($v)) {
 				chmod($v, 0755);
