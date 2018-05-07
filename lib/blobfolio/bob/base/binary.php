@@ -15,6 +15,7 @@ use \blobfolio\bob\utility;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\format as r_format;
+use \blobfolio\common\ref\mb as r_mb;
 use \blobfolio\common\ref\sanitize as r_sanitize;
 use \Throwable;
 
@@ -155,6 +156,11 @@ abstract class binary {
 			if (false === ($out = static::exec_system($cmd))) {
 				$out = false;
 			}
+		}
+
+		// Get rid of trailing whitespace.
+		if (is_string($out)) {
+			r_mb::trim($out);
 		}
 
 		// Change the directory back.
