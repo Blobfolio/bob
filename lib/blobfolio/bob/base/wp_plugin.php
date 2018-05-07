@@ -373,6 +373,20 @@ abstract class wp_plugin {
 				file_put_contents(static::$working_dir . 'index.php', $tmp);
 			}
 
+			// A lot of plugins have a release info file next to the
+			// zip.
+			if ('zip' === static::RELEASE_TYPE) {
+				$json_out = substr(static::RELEASE_OUT, 0, -4) . '.json';
+				if (is_file($json_out)) {
+					$tmp = trim(file_get_contents($json_out));
+					$tmp = json_decode($tmp, true);
+					if (isset($tmp['Version'])) {
+						$tmp['Version'] = $new_version;
+						file_put_contents($json_out, json_encode($tmp, JSON_PRETTY_PRINT));
+					}
+				}
+			}
+
 			// In case there's any other weird stuff to do.
 			static::patch_version($new_version);
 		}
