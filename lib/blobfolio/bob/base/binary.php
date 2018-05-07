@@ -45,12 +45,12 @@ abstract class binary {
 
 		// See if we can get it.
 		$tmp = utility::get_remote(static::REMOTE);
-		if (!isset($tmp[0]) || (false === $tmp[0])) {
+		if (!isset($tmp[static::REMOTE]) || (false === $tmp[static::REMOTE])) {
 			utility::log('Download failed.', 'error', true);
 		}
 
 		// Fix the permissions.
-		$this->binary = $tmp[0];
+		$this->binary = $tmp[static::REMOTE];
 		utility::log('Fixing permissions…', '', true);
 		chmod($this->binary, static::CHMOD);
 
