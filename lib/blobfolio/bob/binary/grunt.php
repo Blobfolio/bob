@@ -62,7 +62,7 @@ class grunt extends \blobfolio\bob\base\binary {
 	public function run_task(string $dir, string $task) {
 		utility::log('Running Grunt task "' . $task . '"…');
 
-		var_dump($this->binary());
+		var_dump($this->binary);
 
 		if (!$this->exists()) {
 			utility::log('Grunt is not initialized.', 'error');
