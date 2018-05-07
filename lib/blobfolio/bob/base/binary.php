@@ -41,7 +41,7 @@ abstract class binary {
 
 		$host = static::REMOTE;
 		r_sanitize::hostname($host);
-		utility::log("Downloading from $host…", '', true);
+		utility::log("Downloading from {$host}…", '', true);
 
 		// See if we can get it.
 		$tmp = utility::get_remote(static::REMOTE);
