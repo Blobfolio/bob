@@ -691,5 +691,22 @@ class utility {
 		}
 	}
 
+	/**
+	 * Percent
+	 *
+	 * For e.g. progress.
+	 *
+	 * @param float $percent Percent (0-1).
+	 * @return void Nothing.
+	 */
+	public static function progress(float $percent) {
+		r_sanitize::to_range($percent, 0.0, 100.0);
+		$percent *= 100;
+		$percent = round($percent);
+		$percent = str_pad("$percent%", 4, ' ', STR_PAD_RIGHT);
+
+		echo "   \033[2m++\033[0m $percent\r";
+	}
+
 	// ----------------------------------------------------------------- end cli
 }
