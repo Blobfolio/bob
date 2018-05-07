@@ -71,6 +71,17 @@ abstract class build {
 			utility::log('This script must be run as root.', 'error', false);
 		}
 
+		// Make sure defined things exist.
+		if (static::SOURCE_DIR && !is_dir(static::SOURCE_DIR)) {
+			utility::log('Invalid source directory.', 'error', false);
+		}
+		if (static::COMPOSER_CONFIG && !is_file(static::COMPOSER_CONFIG)) {
+			utility::log('Invalid Composer file.', 'error', false);
+		}
+		if (static::PHPAB_AUTOLOADER && !is_dir(dirname(static::PHPAB_AUTOLOADER))) {
+			utility::log('Invalid phpab autoloader location.', 'error', false);
+		}
+
 		// Get our dependencies.
 		utility::log('BINARY DEPENDENCIES', 'header');
 		static::pre_get_binaries();
