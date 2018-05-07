@@ -30,7 +30,7 @@ abstract class build {
 	// Where to save release.
 	const RELEASE_OUT = '';
 	// When zipping, should files go inside a subdir?
-	const RELEASE_ZIP_SUBDIR = true;
+	const RELEASE_ZIP_SUBDIR = '';
 
 	// Binary dependencies. The values should be callable.
 	const BINARIES = array();

@@ -501,10 +501,10 @@ class utility {
 	 *
 	 * @param string $zip Zip file.
 	 * @param string $dir Directory.
-	 * @param bool $subdir Throw in subdir.
+	 * @param string $subdir Throw in subdir.
 	 * @return bool True/false.
 	 */
-	public static function zip(string $zip, string $dir, bool $subdir=true) {
+	public static function zip(string $zip, string $dir, string $subdir='') {
 		// Announce it.
 		static::log('Packaging zip…');
 
@@ -534,7 +534,8 @@ class utility {
 		$handle->open($zip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
 		$base_absolute = '#^' . preg_quote($dir, '#') . '#';
-		$base_relative = basename($dir) . '/';
+		$base_relative = ltrim($subdir, '/');
+		r_file::trailingslash($base_relative);
 
 		// Loop it.
 		static::log('Compressing files…');
