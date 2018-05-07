@@ -73,7 +73,7 @@ abstract class binary {
 	public function exists() {
 		return (
 			!is_null($this->binary) &&
-			((false === strpos($this->binary, '/')) || is_file($this->binary))
+			((false === strpos($this->binary, '/')) || file_exists($this->binary))
 		);
 	}
 
