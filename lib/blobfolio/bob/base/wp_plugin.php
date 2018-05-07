@@ -326,7 +326,7 @@ abstract class wp_plugin extends build {
 		if (count(static::RELEASE_COMPRESS)) {
 			utility::log('Compressing PHP scripts…');
 			foreach (static::RELEASE_COMPRESS as $v) {
-				$v = str_replace('%TMP%', static::$working_dir);
+				$v = str_replace('%TMP%', static::$working_dir, $v);
 				utility::compress_php($v);
 			}
 		}
