@@ -215,7 +215,7 @@ class utility {
 			foreach ($chunk as $url) {
 				$out[$url] = (int) curl_getinfo($curls[$url], CURLINFO_HTTP_CODE);
 				if ($out[$url] >= 200 && $out[$url] < 400) {
-					save_cache($url, curl_multi_getcontent($curls[$url]));
+					static::save_cache($url, curl_multi_getcontent($curls[$url]));
 					$out[$url] = static::get_cache_key($url);
 				}
 				else {
