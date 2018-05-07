@@ -41,6 +41,12 @@ abstract class build {
 	// Extra shitlist.
 	const SHITLIST = array();
 
+	// We can skip steps as needed.
+	const SKIP_BINARY_DEPENDENCIES = false;
+	const SKIP_BUILD = false;
+	const SKIP_FILE_DEPENDENCIES = false;
+	const SKIP_PACKAGE = false;
+
 	// Binaries we might be using.
 	protected static $deps = array();
 
@@ -83,35 +89,43 @@ abstract class build {
 		}
 
 		// Get our dependencies.
-		utility::log('BINARY DEPENDENCIES', 'header');
-		static::pre_get_binaries();
-		static::get_binaries();
-		static::post_get_binaries();
+		if (!static::SKIP_BINARY_DEPENDENCIES || count(static::BINARIES)) {
+			utility::log('BINARY DEPENDENCIES', 'header');
+			static::pre_get_binaries();
+			static::get_binaries();
+			static::post_get_binaries();
+		}
 
 		// Make sure we have our files.
-		utility::log('FILE DEPENDENCIES', 'header');
-		static::pre_get_files();
-		static::get_files();
-		static::post_get_files();
+		if (!static::SKIP_FILE_DEPENDENCIES || count(static::FILES)) {
+			utility::log('FILE DEPENDENCIES', 'header');
+			static::pre_get_files();
+			static::get_files();
+			static::post_get_files();
+		}
 
 		// Build the project.
-		utility::log('BUILDING ' . strtoupper(static::NAME), 'header');
-		static::pre_build_tasks();
-		static::build_tasks();
-		static::post_build_tasks();
+		if (!static::SKIP_BUILD) {
+			utility::log('BUILDING ' . strtoupper(static::NAME), 'header');
+			static::pre_build_tasks();
+			static::build_tasks();
+			static::post_build_tasks();
+		}
 
 		// Package release.
-		utility::log('PACKAGING ' . strtoupper(static::NAME), 'header');
-		static::make_working();
-		static::pre_package();
-		static::package();
-		static::post_package();
+		if (!static::SKIP_PACKAGE) {
+			utility::log('PACKAGING ' . strtoupper(static::NAME), 'header');
+			static::make_working();
+			static::pre_package();
+			static::package();
+			static::post_package();
 
-		// Build release.
-		utility::log('CLEANING UP', 'header');
-		static::pre_clean();
-		static::clean();
-		static::post_clean();
+			// Build release.
+			utility::log('CLEANING UP', 'header');
+			static::pre_clean();
+			static::clean();
+			static::post_clean();
+		}
 
 		// We're done!
 		$end = microtime(true);
