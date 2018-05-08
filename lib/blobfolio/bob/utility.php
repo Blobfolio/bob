@@ -8,7 +8,6 @@
 
 namespace blobfolio\bob;
 
-use \blobfolio\common\data;
 use \blobfolio\common\cast as v_cast;
 use \blobfolio\common\file as v_file;
 use \blobfolio\common\ref\cast as r_cast;
@@ -343,7 +342,7 @@ class utility {
 		if (is_array($cols)) {
 			r_sanitize::whitespace($cols);
 
-			if (data::array_type($cols) === 'associative') {
+			if (v_cast::array_type($cols) === 'associative') {
 				$associative = true;
 				$cols = array_flip($cols);
 				ksort($cols);
