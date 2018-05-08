@@ -8,13 +8,13 @@
 
 namespace blobfolio\bob;
 
-use \blobfolio\common\file as v_file;
-use \blobfolio\common\ref\file as r_file;
-use \blobfolio\common\ref\sanitize as r_sanitize;
-use \blobfolio\common\ref\cast as r_cast;
+use \blobfolio\common\data;
 use \blobfolio\common\cast as v_cast;
+use \blobfolio\common\file as v_file;
+use \blobfolio\common\ref\cast as r_cast;
+use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\mb as r_mb;
-use \blobfolio\common\cli;
+use \blobfolio\common\ref\sanitize as r_sanitize;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \ZipArchive;
@@ -56,7 +56,7 @@ class utility {
 
 
 	// -----------------------------------------------------------------
-	// Remote Sources
+	// Working Data/Cache
 	// -----------------------------------------------------------------
 
 	/**
@@ -148,6 +148,14 @@ class utility {
 
 		return false;
 	}
+
+	// ----------------------------------------------------------------- end local/cache
+
+
+
+	// -----------------------------------------------------------------
+	// Remote/URL
+	// -----------------------------------------------------------------
 
 	/**
 	 * Fetch Remote
@@ -306,6 +314,95 @@ class utility {
 		}
 
 		return "\n" . implode(",\n", $out) . ",\n" . str_repeat("\t", $indent - 1);
+	}
+
+	/**
+	 * Map CSV Headers
+	 *
+	 * Read the first line of a CSV and return an array containing the
+	 * indexes of the requested keys.
+	 *
+	 * If columns are specified, only those columns will be returned.
+	 *
+	 * If columns is an associative array, the returned indexes will use
+	 * the keys from the map rather than whatever stupid thing the file
+	 * contained. For example, pass ["key": "Some Stupid Long Index"] to
+	 * get a response with "key" instead of "Some Stupid...".
+	 *
+	 * @param string $file File.
+	 * @param array $cols Columns.
+	 * @return array Columns.
+	 */
+	public static function get_csv_headers(string $file, $cols=null) {
+		if (!$file || ('.csv' !== substr($file, -4))) {
+			static::log('Could not open CSV.', 'error');
+		}
+
+		// Are we looking for particular columns?
+		$associative = false;
+		if (is_array($cols)) {
+			r_sanitize::whitespace($cols);
+
+			if (data::array_type($cols) === 'associative') {
+				$associative = true;
+				$cols = array_flip($cols);
+				ksort($cols);
+			}
+			else {
+				sort($cols);
+				$cols = array_flip($cols);
+			}
+		}
+		elseif (!is_null($cols)) {
+			$cols = null;
+		}
+
+		// Try to open the file and read the first line.
+		if ($handle = fopen($file, 'r')) {
+			$out = array();
+			while (false !== ($line = fgetcsv($handle))) {
+				// We expect a line with stuff in it.
+				if (!isset($line[0])) {
+					continue;
+				}
+
+				r_sanitize::whitespace($line);
+				$line = array_flip($line);
+
+				// If we aren't filtering out columns, just return line.
+				if (is_null($cols)) {
+					foreach ($line as $k=>$v) {
+						$out[$k] = (int) $v;
+					}
+					ksort($out);
+				}
+				// Otherwise, let's filter.
+				else {
+					$out = array();
+					foreach ($cols as $k=>$v) {
+						if (!isset($line[$k])) {
+							static::log("Missing column: $k", 'error');
+						}
+						$key = $associative ? $v : $k;
+						$out[$key] = (int) $line[$k];
+					}
+					ksort($out);
+				}
+
+				// We don't need to loop any more.
+				break;
+			}
+			fclose($handle);
+
+			if (!count($out)) {
+				static::log('The CSV has no headers.', 'error');
+			}
+
+			return $out;
+		}
+		else {
+			static::log('Could not open CSV.', 'error');
+		}
 	}
 
 	// ----------------------------------------------------------------- end parsing
@@ -629,6 +726,7 @@ class utility {
 		$answer = '';
 		while (!$answer) {
 			static::log($question);
+			echo '      ';
 			if ($handle = fopen('php://stdin', 'r')) {
 				$answer = fgets($handle);
 				r_sanitize::whitespace($answer);
@@ -686,15 +784,19 @@ class utility {
 
 		echo "$line\n";
 
+		// Die on error.
 		if ('error' === $style) {
 			exit(1);
 		}
 	}
 
 	/**
-	 * Percent
+	 * Progress Reporting
 	 *
-	 * For e.g. progress.
+	 * A poor man's progress indicator: just pass a percent in decimal
+	 * notation (e.g. a fraction between 0 and 1) and it will print out
+	 * as a percent. Call the function again and the output will replace
+	 * the prior output. In other words, it looks kinda animated.
 	 *
 	 * @param float $percent Percent (0-1).
 	 * @return void Nothing.
