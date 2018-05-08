@@ -373,7 +373,6 @@ class utility {
 					foreach ($line as $k=>$v) {
 						$out[$k] = (int) $v;
 					}
-					ksort($out);
 				}
 				// Otherwise, let's filter.
 				else {
@@ -385,7 +384,6 @@ class utility {
 						$key = $associative ? $v : $k;
 						$out[$key] = (int) $line[$k];
 					}
-					ksort($out);
 				}
 
 				// We don't need to loop any more.
