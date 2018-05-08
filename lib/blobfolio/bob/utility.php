@@ -345,10 +345,8 @@ class utility {
 			if (v_cast::array_type($cols) === 'associative') {
 				$associative = true;
 				$cols = array_flip($cols);
-				ksort($cols);
 			}
 			else {
-				sort($cols);
 				$cols = array_flip($cols);
 			}
 		}
