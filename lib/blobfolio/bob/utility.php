@@ -14,8 +14,10 @@ use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\mb as r_mb;
 use \blobfolio\common\ref\sanitize as r_sanitize;
-use \RecursiveIteratorIterator;
+use \PharData;
 use \RecursiveDirectoryIterator;
+use \RecursiveIteratorIterator;
+use \Throwable;
 use \ZipArchive;
 
 class utility {
@@ -606,6 +608,51 @@ class utility {
 		$dpkg = new binary\dpkg();
 		$dpkg->build($dir, $deb);
 		return is_file($deb);
+	}
+
+	/**
+	 * Extract Tar
+	 *
+	 * @param string $tar Tar.
+	 * @param string $out Out.
+	 * @return bool True/false.
+	 */
+	public static function untar(string $tar, string $out) {
+		if (!class_exists('PharData')) {
+			static::log('PharData is not installed.', 'error');
+		}
+
+		// Make sure the tar makes sense.
+		r_file::path($tar, true);
+		if (!$tar || !preg_match('/\.tar(\.gz)?$/i', $tar)) {
+			static::log('Invalid tar archive.', 'error');
+		}
+
+		// Lightly sanitize the out too.
+		r_file::path($out, false);
+		if (!$out) {
+			static::log('Invalid output location.', 'error');
+		}
+		// Delete the directory if it exists.
+		if (is_dir($out)) {
+			v_file::rmdir($out);
+		}
+
+		try {
+			$phar = new PharData($tar);
+
+			// Gzip requires a few extra steps.
+			if ('.gz' === substr($tar, -3)) {
+				$tar = substr($tar, 0, -3);
+				$phar->decompress();
+				$phar = new PharData($tar);
+			}
+
+			$phar->extractTo($out);
+			return true;
+		} catch (Throwable $e) {
+			static::log('The archive could not be extracted.', 'error');
+		}
 	}
 
 	// ----------------------------------------------------------------- end package
