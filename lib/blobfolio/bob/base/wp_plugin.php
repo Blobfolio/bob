@@ -132,8 +132,8 @@ abstract class wp_plugin extends build {
 				// namespace.
 				if (static::NAMESPACE_SWAP) {
 					$r_class = str_replace('\\vendor\\blobfolio', '\\vendor', static::NAMESPACE_SWAP . $k);
+					$r_classes[$k] = $r_class;
 				}
-				$r_classes[$k] = $r_class;
 
 				$ns = explode('\\', $k);
 				if (count($ns) > 1) {
