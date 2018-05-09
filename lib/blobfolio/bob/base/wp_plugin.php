@@ -11,6 +11,7 @@ namespace blobfolio\bob\base;
 use \blobfolio\bob\utility;
 use \blobfolio\common\cli;
 use \blobfolio\common\file as v_file;
+use \blobfolio\common\mb as v_mb;
 
 abstract class wp_plugin extends build {
 	// The package name.
