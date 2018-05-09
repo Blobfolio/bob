@@ -52,6 +52,10 @@ abstract class wp_plugin extends build {
 	// File dependencies. The values should be paths.
 	const FILES = array();
 
+	// A few misc variables for us.
+	protected static $replacements;
+	protected static $has_ns;
+
 
 
 	// -----------------------------------------------------------------
@@ -154,20 +158,17 @@ abstract class wp_plugin extends build {
 			utility::log('Patching files…');
 			foreach ($r_files as $file) {
 				$content = file_get_contents($file);
-				$replacements = 0;
+				static::$replacements = 0;
 				$nice_name = str_replace(static::VENDOR_DIR, '', $file);
 
 				// Replace namespaces.
-				$ns = false;
+				static::$has_ns = false;
 				$content = preg_replace_callback(
 					'/^\s*namespace\s+(\\\\)?([a-z0-9\\\\]+)\s*;/im',
 					function ($matches) use($r_namespaces) {
-						global $ns;
-						global $replacements;
-
 						if (3 === count($matches) && isset($r_namespaces[$matches[2]])) {
-							$ns = true;
-							++$replacements;
+							static::$has_ns = true;
+							++static::$replacements;
 							return "namespace {$r_namespaces[$matches[2]]};";
 						}
 
@@ -180,17 +181,15 @@ abstract class wp_plugin extends build {
 				$content = preg_replace_callback(
 					'/^\s*use\s+(\\\\)?([a-z0-9\\\\]+)(\s.*)?;/imU',
 					function ($matches) use($r_classes, $r_namespaces) {
-						global $replacements;
-
 						if (3 <= count($matches)) {
 							$matches = array_pad($matches, 4, '');
 							$matches[2] = ltrim($matches[2], '\\');
-							if (array_key_exists($matches[2], $r_classes)) {
-								++$replacements;
+							if (isset($r_classes[$matches[2]])) {
+								++static::$replacements;
 								return "use \\{$r_classes[$matches[2]]}{$matches[3]};";
 							}
-							elseif (array_key_exists($matches[2], $r_namespaces)) {
-								++$replacements;
+							elseif (isset($r_namespaces[$matches[2]])) {
+								++static::$replacements;
 								return "use \\{$r_namespaces[$matches[2]]}{$matches[3]};";
 							}
 						}
@@ -201,13 +200,13 @@ abstract class wp_plugin extends build {
 				);
 
 				// Supply missing namespaces.
-				if (!$ns) {
+				if (!static::$has_ns) {
 					if (preg_match('/\b(class|interface|trait)\s+([a-z0-9]+)/im', $content, $matches)) {
 						if (
 							isset(static::NAMESPACELESS[$matches[2]]) &&
 							(false !== ($start = v_mb::strpos($content, '<?php')))
 						) {
-							++$replacements;
+							++static::$replacements;
 							$content = v_mb::substr($content, 0, $start + 5) . "\n\nnamespace " . static::NAMESPACE_SWAP . static::NAMESPACELESS[$matches[2]] . ";\n\n" . v_mb::substr($content, $start + 5);
 						}
 					}
@@ -217,11 +216,11 @@ abstract class wp_plugin extends build {
 				}
 
 				// Extra patching.
-				$replacements += static::patch_extra($content);
+				static::$replacements += static::patch_extra($content);
 
-				if ($replacements) {
+				if (static::$replacements) {
 					file_put_contents($file, $content);
-					utility::log("Patched: $nice_name \033[1m[$replacements]\033[0m");
+					utility::log("Patched: $nice_name \033[1m[" . static::$replacements . "]\033[0m");
 				}
 			}
 		}
