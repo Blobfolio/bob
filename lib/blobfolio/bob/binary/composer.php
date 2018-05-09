@@ -84,7 +84,7 @@ class composer extends \blobfolio\bob\base\binary {
 		$out = $this->exec($cmd, $dir);
 
 		// Remove the config we copied over if applicable.
-		if ($exists) {
+		if (!$exists) {
 			unlink("{$dir}composer.json");
 		}
 
