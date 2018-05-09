@@ -314,6 +314,7 @@ abstract class wp_plugin extends build {
 			foreach ($files as $v) {
 				$tmp = trim(file_get_contents($v));
 				$tmp = json_decode($tmp, true);
+				print_r($tmp);
 				if (isset($tmp['version'])) {
 					$tmp['version'] = $new_version;
 					file_put_contents($v, json_encode($tmp, JSON_PRETTY_PRINT));
