@@ -311,6 +311,7 @@ abstract class wp_plugin extends build {
 			if (static::SOURCE_DIR && is_file(static::SOURCE_DIR . 'composer.json')) {
 				$files[] = static::SOURCE_DIR . 'composer.json';
 			}
+			print_r($files);
 			foreach ($files as $v) {
 				$tmp = trim(file_get_contents($v));
 				$tmp = json_decode($tmp, true);
