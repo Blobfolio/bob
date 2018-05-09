@@ -1,6 +1,6 @@
 <?php
 /**
- * BOB: Grunt Binary
+ * BOB: Dpkg
  *
  * @see {https://github.com/theseer/Autoload}
  *
@@ -60,7 +60,7 @@ class dpkg extends \blobfolio\bob\base\binary {
 	 * @return bool True/false.
 	 */
 	public function build(string $dir, string $deb) {
-		static::log('Building deb…');
+		static::log('Finding deb…');
 
 		if (!$this->exists()) {
 			utility::log('dpkg-deb is not initialized.', 'error');
