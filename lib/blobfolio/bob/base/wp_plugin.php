@@ -91,7 +91,7 @@ abstract class wp_plugin extends build {
 		// No class patching needed.
 		if (
 			!static::VENDOR_DIR ||
-			(!count(static::NAMESPACE_SWAP) && !count(static::NAMESPACELESS))
+			(!static::NAMESPACE_SWAP && !count(static::NAMESPACELESS))
 		) {
 			return;
 		}
