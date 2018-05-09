@@ -54,6 +54,8 @@ class phpab extends \blobfolio\bob\base\binary {
 		// Compile the command.
 		if (false === ($cmd = $this->get_command(array(
 			'-e ' . escapeshellarg("{$dir}node_modules/*"),
+			'-e ' . escapeshellarg("{$dir}tests/*"),
+			'-n',
 			'--tolerant',
 			'-o ' . escapeshellarg($file),
 			escapeshellarg($dir),
