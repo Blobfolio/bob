@@ -303,6 +303,23 @@ abstract class wp_plugin extends build {
 				}
 			}
 
+			// The Composer file too, might have a version.
+			$files = array();
+			if (static::COMPOSER_CONFIG) {
+				$files[] = static::COMPOSER_CONFIG;
+			}
+			if (static::SOURCE_DIR && is_file(static::SOURCE_DIR . 'composer.json')) {
+				$files[] = static::SOURCE_DIR . 'composer.json';
+			}
+			foreach ($files as $v) {
+				$tmp = trim(file_get_contents($v));
+				$tmp = json_decode($tmp, true);
+				if (isset($tmp['version'])) {
+					$tmp['version'] = $new_version;
+					file_put_contents($v, json_encode($tmp, JSON_PRETTY_PRINT));
+				}
+			}
+
 			// In case there's any other weird stuff to do.
 			static::patch_version($new_version);
 		}
