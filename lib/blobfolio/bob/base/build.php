@@ -323,6 +323,9 @@ abstract class build {
 				break;
 			default:
 				utility::log('Copying files…');
+				if (is_dir(static::RELEASE_OUT)) {
+					v_file::rmdir(static::RELEASE_OUT);
+				}
 				v_file::copy(static::$working_dir, static::RELEASE_OUT);
 		}
 	}
