@@ -101,10 +101,10 @@ abstract class wp_plugin extends build {
 			utility::log('Parsing autoloader…');
 			$tmp = file_get_contents(static::PHPAB_AUTOLOADER);
 			if (
-				(false !== ($start = strpos($autoloader, '$classes = array'))) &&
-				(false !== ($end = strpos($autoloader, ');', $start)))
+				(false !== ($start = strpos($tmp, '$classes = array'))) &&
+				(false !== ($end = strpos($tmp, ');', $start)))
 			) {
-				$classes = substr($autoloader, $start, ($end - $start + 2));
+				$classes = substr($tmp, $start, ($end - $start + 2));
 				// phpcs:disable
 				eval($classes);
 				// phpcs:enable
