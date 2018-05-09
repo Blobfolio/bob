@@ -165,7 +165,7 @@ class utility {
 	 * @param array $urls URLs.
 	 * @return array Response file path(s).
 	 */
-	public function get_remote($urls) {
+	public static function get_remote($urls) {
 		$out = array();
 
 		// Sanitize the URL list.
