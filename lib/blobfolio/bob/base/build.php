@@ -165,6 +165,8 @@ abstract class build {
 		foreach (static::BINARIES as $v) {
 			switch ($v) {
 				case 'composer':
+				case 'dpkg':
+				case 'git':
 				case 'phpab':
 				case 'grunt':
 					$v = '\\blobfolio\\bob\\binary\\' . $v;
