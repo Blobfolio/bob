@@ -34,10 +34,7 @@ class grunt extends \blobfolio\bob\base\binary {
 		utility::log('Fetching ' . static::NAME . '…');
 
 		if (!defined('BOB_GRUNT_BINARY')) {
-			if (false === ($tmp = static::exec('command -v grunt'))) {
-				$tmp = 'grunt';
-			}
-			define('BOB_GRUNT_BINARY', $tmp);
+			define('BOB_GRUNT_BINARY', static::find_command('grunt'));
 		}
 
 		$this->binary = BOB_GRUNT_BINARY;

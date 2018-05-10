@@ -36,10 +36,7 @@ class git extends \blobfolio\bob\base\binary {
 		utility::log('Fetching ' . static::NAME . '…');
 
 		if (!defined('BOB_GIT_BINARY')) {
-			if (false === ($tmp = static::exec('command -v git'))) {
-				$tmp = 'git';
-			}
-			define('BOB_GIT_BINARY', $tmp);
+			define('BOB_GIT_BINARY', static::find_command('git'));
 		}
 
 		$this->binary = BOB_GIT_BINARY;
@@ -108,6 +105,7 @@ class git extends \blobfolio\bob\base\binary {
 			'project'=>'',
 			'version'=>'',
 			'url'=>'',
+			'tar'=>'',
 		);
 
 		// Validate the repo and tease out account/project.
@@ -158,9 +156,10 @@ class git extends \blobfolio\bob\base\binary {
 		// Should we download the file?
 		if ($download) {
 			$tmp = utility::get_remote($out['url']);
-			if (!isset($tmp[$url]) || (false === $tmp[$url])) {
+			if (!isset($tmp[$out['url']]) || (false === $tmp[$out['url']])) {
 				utility::log('Could not download release.', 'error');
 			}
+			$out['tar'] = $tmp[$out['url']];
 		}
 
 		return $out;

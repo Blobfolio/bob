@@ -57,10 +57,7 @@ abstract class binary {
 
 		// We'll also want to know where PHP lives.
 		if (!defined('BOB_PHP_BINARY')) {
-			if (false === ($tmp = static::exec('command -v php'))) {
-				$tmp = 'php';
-			}
-			define('BOB_PHP_BINARY', $tmp);
+			define('BOB_PHP_BINARY', static::find_command('php'));
 		}
 
 		return true;
@@ -215,6 +212,25 @@ abstract class binary {
 		} catch (Throwable $e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Find Command
+	 *
+	 * See if there is a path registered for a command.
+	 *
+	 * @param string $cmd Command.
+	 * @param bool $soft Soft check.
+	 * @return string|bool Command or false.
+	 */
+	public static function find_command(string $cmd, bool $soft=true) {
+		if (false === ($out = static::exec('command -v ' . escapeshellarg($cmd)))) {
+			if ($soft) {
+				$out = $cmd;
+			}
+		}
+
+		return $out;
 	}
 
 	// ----------------------------------------------------------------- end command

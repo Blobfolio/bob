@@ -34,10 +34,7 @@ class dpkg extends \blobfolio\bob\base\binary {
 		utility::log('Fetching ' . static::NAME . '…');
 
 		if (!defined('BOB_DPKG_BINARY')) {
-			if (false === ($tmp = static::exec('command -v dpkg-deb'))) {
-				$tmp = 'dpkg-deb';
-			}
-			define('BOB_DPKG_BINARY', $tmp);
+			define('BOB_DPKG_BINARY', static::find_command('dpkg-deb'));
 		}
 
 		$this->binary = BOB_DPKG_BINARY;
