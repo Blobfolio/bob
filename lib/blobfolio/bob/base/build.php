@@ -291,8 +291,7 @@ abstract class build {
 		// If there is no source directory, go ahead and make a
 		// randomly-named subdirectory for use.
 		else {
-			static::$working_dir = utility::get_tmp_dir() . md5(microtime(true)) . '/';
-			v_file::mkdir(static::$working_dir, 0755);
+			static::$working_dir = utility::generate_tmp_dir();
 		}
 	}
 

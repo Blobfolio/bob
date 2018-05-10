@@ -9,6 +9,7 @@
 namespace blobfolio\bob;
 
 use \blobfolio\common\cast as v_cast;
+use \blobfolio\common\data;
 use \blobfolio\common\file as v_file;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
@@ -76,6 +77,24 @@ class utility {
 		}
 
 		return static::$tmp_dir;
+	}
+
+	/**
+	 * Make Random Dir
+	 *
+	 * @return string Directory.
+	 */
+	public static function generate_tmp_dir() {
+		$tmp = utility::get_tmp_dir() . data::random_string(10);
+		while (file_exists($tmp)) {
+			$tmp = utility::get_tmp_dir() . data::random_string(10);
+		}
+		$tmp .= '/';
+
+		// Make it.
+		v_file::mkdir($tmp, 0755);
+
+		return $tmp;
 	}
 
 	/**
