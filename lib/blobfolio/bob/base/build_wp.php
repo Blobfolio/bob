@@ -13,7 +13,7 @@ use \blobfolio\common\cli;
 use \blobfolio\common\file as v_file;
 use \blobfolio\common\mb as v_mb;
 
-abstract class wp_plugin extends build {
+abstract class build_wp extends build {
 	// The package name.
 	const NAME = '';
 

@@ -13,7 +13,7 @@ use \blobfolio\common\cli;
 use \blobfolio\common\file as v_file;
 use \blobfolio\common\mb as v_mb;
 
-abstract class deb extends build {
+abstract class build_deb extends build {
 	// The package name.
 	const NAME = '';
 
