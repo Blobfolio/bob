@@ -71,7 +71,7 @@ class utility {
 			r_file::trailingslash(static::$tmp_dir, true);
 			static::$tmp_dir .= 'bob/';
 			if (!is_dir(static::$tmp_dir)) {
-				v_file::mkdir(static::$tmp_dir, 0755);
+				v_file::mkdir(static::$tmp_dir, 0777);
 			}
 		}
 
@@ -144,6 +144,7 @@ class utility {
 	protected static function save_cache(string $url, $content) {
 		if (false !== ($key = static::get_cache_key($url))) {
 			file_put_contents($key, $content);
+			chmod($key, 0644);
 			return is_file($key);
 		}
 
@@ -600,7 +601,7 @@ class utility {
 			if (preg_match('/^Version:\s*([^\s]+)/m', $tmp, $match)) {
 				$version = $match[1];
 				if (false === strpos($deb, "_{$version}.deb")) {
-					$deb = substr($deb, 0, -4) . $version . '.deb';
+					$deb = substr($deb, 0, -4) . "_{$version}.deb";
 				}
 			}
 		}
@@ -622,6 +623,10 @@ class utility {
 			static::log('PharData is not installed.', 'error');
 		}
 
+		if (!function_exists('gzopen')) {
+			static::log('Gzip is not installed.', 'error');
+		}
+
 		// Make sure the tar makes sense.
 		r_file::path($tar, true);
 		if (!$tar || !preg_match('/\.tar(\.gz)?$/i', $tar)) {
@@ -638,16 +643,32 @@ class utility {
 			v_file::rmdir($out);
 		}
 
+		// We might have to extract it first.
+		if ('.gz' === substr($tar, -3)) {
+			try {
+				if ($gz_handle = gzopen($tar, 'rb')) {
+					$tar = substr($tar, 0, -3);
+					if ($tar_handle = fopen($tar, 'wb')) {
+						while (!gzeof($gz_handle)) {
+							fwrite($tar_handle, gzread($gz_handle, 4096));
+						}
+						fclose($tar_handle);
+						gzclose($gz_handle);
+					}
+					else {
+						utility::log('A decompressed tar could not be saved.', 'error');
+					}
+				}
+				else {
+					utility::log('The archive could not be decompressed.', 'error');
+				}
+			} catch (Throwable $e) {
+				utility::log('The archive could not be decompressed.', 'error');
+			}
+		}
+
 		try {
 			$phar = new PharData($tar);
-
-			// Gzip requires a few extra steps.
-			if ('.gz' === substr($tar, -3)) {
-				$tar = substr($tar, 0, -3);
-				$phar->decompress();
-				$phar = new PharData($tar);
-			}
-
 			$phar->extractTo($out);
 			return true;
 		} catch (Throwable $e) {
