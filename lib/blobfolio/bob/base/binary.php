@@ -12,6 +12,7 @@
 namespace blobfolio\bob\base;
 
 use \blobfolio\bob\utility;
+use \blobfolio\common\cli;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\format as r_format;
@@ -130,9 +131,28 @@ abstract class binary {
 	 *
 	 * @param string $cmd Command.
 	 * @param string $cwd Current working directory.
+	 * @param bool $sudo Sudo.
 	 * @return string|bool Response or false.
 	 */
-	public static function exec(string $cmd, string $cwd='') {
+	public static function exec(string $cmd, string $cwd='', bool $sudo=false) {
+		// Prefix with sudo?
+		if ($sudo) {
+			// The root state of the user executing this script.
+			$user_sudo = cli::is_root();
+			// Whether or not a sudo is already in the command.
+			$cmd_sudo = !!(preg_match('/^sudo\s/i', $cmd));
+
+			// The user is already root.
+			if ($user_sudo && $cmd_sudo) {
+				$cmd = preg_replace('/^sudo\s*/i', '', $cmd);
+			}
+			// The command needs sudo.
+			elseif (!$user_sudo && !$cmd_sudo) {
+				$cmd = "sudo $cmd";
+			}
+		}
+
+
 		// If we want a special directory, it should be a valid one.
 		if ($cwd) {
 			r_file::path($cwd, true);
@@ -224,6 +244,12 @@ abstract class binary {
 	 * @return string|bool Command or false.
 	 */
 	public static function find_command(string $cmd, bool $soft=true) {
+		// Hard Coded?
+		$const = strtoupper("BOB_{$cmd}_BINARY");
+		if (defined($const)) {
+			return constant($const);
+		}
+
 		if (false === ($out = static::exec('command -v ' . escapeshellarg($cmd)))) {
 			if ($soft) {
 				$out = $cmd;
