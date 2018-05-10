@@ -57,7 +57,7 @@ class dpkg extends \blobfolio\bob\base\binary {
 	 * @return bool True/false.
 	 */
 	public function build(string $dir, string $deb) {
-		static::log('Finding deb…');
+		utility::log('Finding deb…');
 
 		if (!$this->exists()) {
 			utility::log('dpkg-deb is not initialized.', 'error');
@@ -66,18 +66,13 @@ class dpkg extends \blobfolio\bob\base\binary {
 
 		// The directory needs to be valid.
 		r_file::path($dir, true);
-		if (!$dir || !is_dir($dir) || !is_dir("{$dir}node_modules")) {
+		if (!$dir || !is_dir($dir) || !is_dir("{$dir}DEBIAN")) {
 			utility::log('Invalid dpkg project directory.', 'error');
 			return false;
 		}
 
 		// All files should be owned by root.
-		$files = v_file::scandir($dir);
-		$files[] = $dir;
-		foreach ($files as $v) {
-			chgrp($v, 'root');
-			chown($v, 'root');
-		}
+		static::exec('chown -R root:root ' . escapeshellarg($dir), '', true);
 
 		// Compile the command.
 		if (false === ($cmd = $this->get_command(array(
