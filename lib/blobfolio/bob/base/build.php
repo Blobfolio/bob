@@ -79,6 +79,10 @@ abstract class build {
 		if (static::ROOT && !cli::is_root()) {
 			utility::log('This script must be run as root.', 'error', false);
 		}
+		// Forbid root.
+		elseif (!static::ROOT && cli::is_root()) {
+			utility::log('Do not run this script as root.', 'error', false);
+		}
 
 		// Make sure defined things exist.
 		if (static::SOURCE_DIR && !is_dir(static::SOURCE_DIR)) {
@@ -321,7 +325,7 @@ abstract class build {
 				utility::zip(static::RELEASE_OUT, static::$working_dir, static::RELEASE_ZIP_SUBDIR);
 				break;
 			case 'deb':
-				utility::deb(static::RELEASE_OUT, static::$working_dir);
+				utility::deb(static::$working_dir, static::RELEASE_OUT);
 				break;
 			default:
 				utility::log('Copying files…');
