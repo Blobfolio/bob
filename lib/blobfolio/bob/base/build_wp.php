@@ -273,12 +273,13 @@ abstract class build_wp extends build {
 		else {
 			$new_version = utility::prompt('Enter the version number:', true);
 		}
+		$new_version = preg_replace('/[^\d\.\-\_]/', '', $new_version);
 		if (!$new_version && $version) {
 			$new_version = $version;
 		}
 
 		// Patch versions.
-		if ($new_version !== $version) {
+		if ($new_version) {
 			utility::log('Patching version…');
 
 			// Most plugins will have version info in the index headers.
