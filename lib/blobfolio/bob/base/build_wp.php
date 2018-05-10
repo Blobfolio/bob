@@ -299,8 +299,11 @@ abstract class build_wp extends build {
 					$tmp = json_decode($tmp, true);
 					if (isset($tmp['Version'])) {
 						$tmp['Version'] = $new_version;
-						file_put_contents($json_out, json_encode($tmp, JSON_PRETTY_PRINT));
 					}
+					elseif (isset($tmp['version'])) {
+						$tmp['version'] = $new_version;
+					}
+					file_put_contents($json_out, json_encode($tmp, JSON_PRETTY_PRINT));
 				}
 			}
 
