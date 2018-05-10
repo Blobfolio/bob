@@ -152,7 +152,6 @@ abstract class binary {
 			}
 		}
 
-
 		// If we want a special directory, it should be a valid one.
 		if ($cwd) {
 			r_file::path($cwd, true);
