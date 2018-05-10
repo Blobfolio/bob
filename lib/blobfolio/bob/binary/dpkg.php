@@ -74,6 +74,12 @@ class dpkg extends \blobfolio\bob\base\binary {
 		// All files should be owned by root.
 		static::exec('chown -R root:root ' . escapeshellarg($dir), '', true);
 
+		// Remove the original.
+		if (is_file($deb)) {
+			utility::log('Removing existing package…');
+			unlink($deb);
+		}
+
 		// Compile the command.
 		if (false === ($cmd = $this->get_command(array(
 			'--build',
