@@ -406,7 +406,7 @@ class utility {
 			return true;
 		}
 
-		static::log("Missing $file.", 'warning', false);
+		static::log("Missing $file.", 'warning');
 		while (!is_file($file)) {
 			static::prompt("Copy the missing file and press \033[95m<ENTER>\033[0m to continue.", false);
 		}
