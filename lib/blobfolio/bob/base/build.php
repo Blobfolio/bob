@@ -23,6 +23,10 @@ abstract class build {
 	// Does this require root?
 	const ROOT = false;
 
+	// Required functions?
+	const REQUIRED_FUNCTIONS = array();
+	const REQUIRED_EXTENSIONS = array();
+
 	// The source directory.
 	const SOURCE_DIR = '';
 	const COMPOSER_CONFIG = '';
@@ -82,6 +86,20 @@ abstract class build {
 		// Forbid root.
 		elseif (!static::ROOT && cli::is_root()) {
 			utility::log('Do not run this script as root.', 'error', false);
+		}
+
+		// Required functions?
+		foreach (static::REQUIRED_FUNCTIONS as $v) {
+			if (!function_exists($v)) {
+				utility::log("Missing required function: $v", 'error', false);
+			}
+		}
+
+		// Required extensions?
+		foreach (static::REQUIRED_EXTENSIONS as $v) {
+			if (!extension_loaded($v)) {
+				utility::log("Missing required extension: $v", 'error', false);
+			}
 		}
 
 		// Make sure defined things exist.
