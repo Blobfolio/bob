@@ -55,6 +55,8 @@ abstract class build {
 
 	// The working directory (if we've copied stuff).
 	protected static $working_dir;
+
+	// Files that were automatically downloaded.
 	protected static $downloads;
 
 
