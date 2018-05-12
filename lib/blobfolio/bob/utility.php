@@ -279,6 +279,7 @@ class utility {
 	 */
 	public static function doc_to_lines(string $str) {
 		r_sanitize::whitespace($str, 1);
+		$str = explode("\n", $str);
 		r_mb::trim($str);
 		$str = array_filter($str, 'strlen');
 		return array_values($str);
