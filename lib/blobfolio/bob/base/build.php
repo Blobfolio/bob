@@ -23,32 +23,28 @@ abstract class build {
 	// Does this require root?
 	const ROOT = false;
 
-	// Required functions?
+	// Runtime requirements.
+	const REQUIRED_CLASSES = array();
 	const REQUIRED_FUNCTIONS = array();
 	const REQUIRED_EXTENSIONS = array();
+	const BINARIES = array();		// Binary objects.
+	const DOWNLOADS = array();		// Remote URLs to fetch.
+	const FILES = array();			// Local files to be expected.
 
-	// The source directory.
+	// Source information.
 	const SOURCE_DIR = '';
 	const COMPOSER_CONFIG = '';
 	const PHPAB_AUTOLOADER = '';
 
-	// Type of release: zip, deb, copy.
-	const RELEASE_TYPE = '';
-	// Where to save release.
+	// Release information.
+	const RELEASE_TYPE = '';		// Either: zip, deb, copy.
 	const RELEASE_OUT = '';
-	// When zipping, should files go inside a subdir?
-	const RELEASE_ZIP_SUBDIR = '';
+	const RELEASE_ZIP_SUBDIR = '';	// Zip files in a subdir or not.
 
-	// Binary dependencies. The values should be callable.
-	const BINARIES = array();
-
-	// File dependencies. The values should be paths.
-	const FILES = array();
-
-	// Extra shitlist.
+	// Additional source files not to copy when packaging.
 	const SHITLIST = array();
 
-	// We can skip steps as needed.
+	// Skip unnecessary steps.
 	const SKIP_BINARY_DEPENDENCIES = false;
 	const SKIP_BUILD = false;
 	const SKIP_FILE_DEPENDENCIES = false;
@@ -59,6 +55,7 @@ abstract class build {
 
 	// The working directory (if we've copied stuff).
 	protected static $working_dir;
+	protected static $downloads;
 
 
 
@@ -74,44 +71,9 @@ abstract class build {
 	public static function compile() {
 		$start = microtime(true);
 
-		// Require CLI mode.
-		if (!cli::is_cli()) {
-			utility::log('This must be run in CLI mode.', 'error', false);
-		}
-
-		// Require root.
-		if (static::ROOT && !cli::is_root()) {
-			utility::log('This script must be run as root.', 'error', false);
-		}
-		// Forbid root.
-		elseif (!static::ROOT && cli::is_root()) {
-			utility::log('Do not run this script as root.', 'error', false);
-		}
-
-		// Required functions?
-		foreach (static::REQUIRED_FUNCTIONS as $v) {
-			if (!function_exists($v)) {
-				utility::log("Missing required function: $v", 'error', false);
-			}
-		}
-
-		// Required extensions?
-		foreach (static::REQUIRED_EXTENSIONS as $v) {
-			if (!extension_loaded($v)) {
-				utility::log("Missing required extension: $v", 'error', false);
-			}
-		}
-
-		// Make sure defined things exist.
-		if (static::SOURCE_DIR && !is_dir(static::SOURCE_DIR)) {
-			utility::log('Invalid source directory.', 'error', false);
-		}
-		if (static::COMPOSER_CONFIG && !is_file(static::COMPOSER_CONFIG)) {
-			utility::log('Invalid Composer file.', 'error', false);
-		}
-		if (static::PHPAB_AUTOLOADER && !is_dir(dirname(static::PHPAB_AUTOLOADER))) {
-			utility::log('Invalid phpab autoloader location.', 'error', false);
-		}
+		// Make sure we can run!
+		static::runtime_checks();
+		static::runtime_extra();
 
 		// Get our dependencies.
 		if (!static::SKIP_BINARY_DEPENDENCIES || count(static::BINARIES)) {
@@ -119,6 +81,17 @@ abstract class build {
 			static::pre_get_binaries();
 			static::get_binaries();
 			static::post_get_binaries();
+		}
+
+		// Download remote files.
+		if (count(static::DOWNLOADS)) {
+			utility::log('Downloading remote sources…');
+			static::$downloads = utility::get_remote(static::DOWNLOADS);
+			foreach (static::DOWNLOADS as $v) {
+				if (!isset(static::$downloads[$v]) || !static::$downloads[$v]) {
+					utility::log("Failed to download $v.", 'error');
+				}
+			}
 		}
 
 		// Make sure we have our files.
@@ -158,6 +131,67 @@ abstract class build {
 		utility::log('DONE!', 'header');
 		utility::log("Finished in $elapsed seconds.", 'success');
 		echo "\n\n";
+	}
+
+	/**
+	 * Runtime Checks.
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function runtime_checks() {
+		// Require CLI mode.
+		if (!cli::is_cli()) {
+			utility::log('This must be run in CLI mode.', 'error', false);
+		}
+
+		// Require root.
+		if (static::ROOT && !cli::is_root()) {
+			utility::log('This script must be run as root.', 'error', false);
+		}
+		// Forbid root.
+		elseif (!static::ROOT && cli::is_root()) {
+			utility::log('Do not run this script as root.', 'error', false);
+		}
+
+		// Required functions?
+		foreach (static::REQUIRED_FUNCTIONS as $v) {
+			if (!function_exists($v)) {
+				utility::log("Missing required function: $v", 'error', false);
+			}
+		}
+
+		// Required extensions?
+		foreach (static::REQUIRED_EXTENSIONS as $v) {
+			if (!extension_loaded($v)) {
+				utility::log("Missing required extension: $v", 'error', false);
+			}
+		}
+
+		// Required classes?
+		foreach (static::REQUIRED_CLASSES as $v) {
+			if (!class_exists($v)) {
+				utility::log("Missing required class: $v", 'error', false);
+			}
+		}
+
+		// Make sure defined things exist.
+		if (static::SOURCE_DIR && !is_dir(static::SOURCE_DIR)) {
+			utility::log('Invalid source directory.', 'error', false);
+		}
+		if (static::COMPOSER_CONFIG && !is_file(static::COMPOSER_CONFIG)) {
+			utility::log('Invalid Composer file.', 'error', false);
+		}
+		if (static::PHPAB_AUTOLOADER && !is_dir(dirname(static::PHPAB_AUTOLOADER))) {
+			utility::log('Invalid phpab autoloader location.', 'error', false);
+		}
+	}
+
+	/**
+	 * Additional Runtime Checks
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function runtime_extra() {
 	}
 
 	// ----------------------------------------------------------------- end setup
