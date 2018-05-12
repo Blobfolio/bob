@@ -88,7 +88,7 @@ abstract class build {
 			utility::log('REMOTE SOURCES', 'header');
 			static::$downloads = utility::get_remote(static::DOWNLOADS);
 			foreach (static::DOWNLOADS as $v) {
-				utility::log("Verifying {$v}…");
+				utility::log("{$v}…");
 				if (!isset(static::$downloads[$v]) || !static::$downloads[$v]) {
 					utility::log("Failed to download $v.", 'error');
 				}
