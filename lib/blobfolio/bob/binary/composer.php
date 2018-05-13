@@ -28,9 +28,10 @@ class composer extends \blobfolio\bob\base\binary {
 	 *
 	 * @param string $dir Directory.
 	 * @param string $conf Configuration.
+	 * @param bool $optimize Static classmap.
 	 * @return bool True/false.
 	 */
-	public function install(string $dir, string $conf='') {
+	public function install(string $dir, string $conf='', bool $optimize=false) {
 		utility::log('Composer: updating libraries…');
 
 		if (!$this->exists()) {
@@ -70,12 +71,18 @@ class composer extends \blobfolio\bob\base\binary {
 			unlink("{$dir}composer.lock");
 		}
 
-		// Compile the command.
-		if (false === ($cmd = $this->get_command(array(
+		// Command arguments.
+		$args = array(
 			'install',
 			'--no-dev',
 			'-q',
-		)))) {
+		);
+		if ($optimize) {
+			$args[] = '-a';
+		}
+
+		// Compile the command.
+		if (false === ($cmd = $this->get_command($args))) {
 			utility::log('CLI command (probably) failed.', 'error', true);
 			return false;
 		}
