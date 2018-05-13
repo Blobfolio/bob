@@ -27,6 +27,7 @@ abstract class build {
 	const REQUIRED_CLASSES = array();
 	const REQUIRED_FUNCTIONS = array();
 	const REQUIRED_EXTENSIONS = array();
+
 	const BINARIES = array();		// Binary objects.
 	const DOWNLOADS = array();		// Remote URLs to fetch.
 	const FILES = array();			// Local files to be expected.
@@ -338,15 +339,17 @@ abstract class build {
 	 * @return void Nothing.
 	 */
 	protected static function make_working() {
-		// Copy the source directory.
-		if (static::SOURCE_DIR) {
-			static::$working_dir = utility::get_tmp_dir() . basename(static::SOURCE_DIR) . '/';
-			utility::copy(static::SOURCE_DIR, static::$working_dir);
-		}
-		// If there is no source directory, go ahead and make a
-		// randomly-named subdirectory for use.
-		else {
-			static::$working_dir = utility::generate_tmp_dir();
+		if (!static::$working_dir) {
+			// Copy the source directory.
+			if (static::SOURCE_DIR) {
+				static::$working_dir = utility::get_tmp_dir() . basename(static::SOURCE_DIR) . '/';
+				utility::copy(static::SOURCE_DIR, static::$working_dir);
+			}
+			// If there is no source directory, go ahead and make a
+			// randomly-named subdirectory for use.
+			else {
+				static::$working_dir = utility::generate_tmp_dir();
+			}
 		}
 	}
 
