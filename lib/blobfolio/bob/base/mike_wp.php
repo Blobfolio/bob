@@ -302,7 +302,11 @@ abstract class mike_wp extends mike {
 		// Try to discover it. Individual builders can always override
 		// this.
 		if (defined('BOB_ROOT_DIR')) {
-			foreach (array('trunk', 'plugin', 'wp') as $v) {
+			$dirs = array('trunk', 'plugin', 'wp');
+			if (static::SLUG) {
+				$dirs[] = static::SLUG;
+			}
+			foreach ($dirs as $v) {
 				$path = dirname(BOB_ROOT_DIR) . "/$v/";
 				if (is_dir($path)) {
 					break;
