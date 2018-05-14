@@ -216,7 +216,7 @@ class himself {
 				}
 				$default = data::array_pop_top($tmp);
 
-				$builder = static::prompt('Choose a builder:', $default, $tmp);
+				$builder = log::prompt('Choose a builder:', $default, $tmp);
 				$builder = array_search($builder, $tmp, true);
 				$builders = array($builder);
 			}
@@ -397,7 +397,7 @@ class himself {
 		$tmp = file_get_contents($file);
 
 		// We expect a namespace.
-		if (!preg_match('/^namespace\s+([^\s;]+)/', $tmp, $matches)) {
+		if (!preg_match('/^namespace\s+([^\s;]+)/m', $tmp, $matches)) {
 			return false;
 		}
 		$namespace = '\\' . ltrim($matches[1], '\\');

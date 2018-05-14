@@ -10,11 +10,13 @@ namespace blobfolio\bob;
 
 use \blobfolio\bob\log;
 use \blobfolio\common\cli;
+use \blobfolio\common\data;
 use \blobfolio\common\file as v_file;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\format as r_format;
 use \blobfolio\common\ref\mb as r_mb;
+use \blobfolio\common\ref\sanitize as r_sanitize;
 use \PharData;
 use \Throwable;
 use \ZipArchive;
@@ -230,7 +232,7 @@ class io {
 	 * @return string Command.
 	 */
 	public static function get_command(string $cmd, $args=null, bool $php=false) {
-		if (false === strpos($cmd, '/') || !file_exists($cmd)) {
+		if (false === strpos($cmd, '/') && !file_exists($cmd)) {
 			$cmd = static::find_command($cmd);
 		}
 
@@ -459,7 +461,7 @@ class io {
 	 */
 	public static function require_file(string $file) {
 		r_file::unleadingslash($file);
-		$path = base\mike::get_tmp_dir($file);
+		$path = static::get_tmp_dir($file);
 
 		// It is already there!
 		if (!$file || file_exists($path)) {
@@ -468,9 +470,9 @@ class io {
 
 		log::warning("File needed: $file");
 
-		$message = log::BULLET . 'Copy it to ' . base\mike::get_tmp_dir() . ' then press any key to continue.';
+		$message = log::BULLET . 'Copy it to ' . static::get_tmp_dir() . ' then press any key to continue.';
 		$tmp = array();
-		while (false !== ($line = static::wordwrap_cut($message))) {
+		while (false !== ($line = log::wordwrap_cut($message))) {
 			$tmp[] = $line;
 		}
 		$tmp = implode("\n", $tmp);
@@ -540,8 +542,8 @@ class io {
 			$composer = static::$_downloads[static::REMOTE_BINARIES['composer']];
 		}
 		else {
-			static::print('Downloading binary…');
-			$composer = static::get_url(static::REMOTE_BINARIES['composer']);
+			log::print('Downloading binary…');
+			$composer = static::get_url(static::REMOTE_BINARIES['composer'], false);
 			@chmod($composer, 0755);
 		}
 
@@ -764,15 +766,15 @@ class io {
 			$phpab = static::$_downloads[static::REMOTE_BINARIES['phpab']];
 		}
 		else {
-			static::print('Downloading binary…');
-			$phpab = static::get_url(static::REMOTE_BINARIES['phpab']);
+			log::print('Downloading binary…');
+			$phpab = static::get_url(static::REMOTE_BINARIES['phpab'], false);
 			@chmod($phpab, 0755);
 		}
 
 		// The directory needs to be valid.
 		r_file::path($dir, true);
 		if (!$dir || !is_dir($dir)) {
-			utility::log('Invalid phpab project directory.', 'error', true);
+			log::error('Invalid phpab project directory.');
 			return false;
 		}
 
@@ -933,12 +935,12 @@ class io {
 	/**
 	 * Zip
 	 *
-	 * @param string $zip Zip file.
 	 * @param string $dir Source directory.
+	 * @param string $zip Zip file.
 	 * @param string $subdir Place files in subdirectory.
 	 * @return void Nothing.
 	 */
-	public static function zip(string $zip, string $dir, string $subdir) {
+	public static function zip(string $dir, string $zip, string $subdir='') {
 		// We need the ZipArchive class.
 		if (!class_exists('ZipArchive')) {
 			log::error('Missing extension: ZipArchive');
@@ -1049,9 +1051,9 @@ class io {
 	 * @return string Path.
 	 */
 	public static function make_dir() {
-		$dir = static::get_tmp_dir(data::random_string(5));
+		$dir = static::get_tmp_dir(data::random_string(5) . '/');
 		while (file_exists($dir)) {
-			$dir = static::get_tmp_dir(data::random_string(5));
+			$dir = static::get_tmp_dir(data::random_string(5) . '/');
 		}
 
 		// Actually make it.
@@ -1327,7 +1329,7 @@ class io {
 			$shitlist = static::SHITLIST;
 		}
 		// Just make sure we have an array.
-		else {
+		elseif (!is_array($shitlist)) {
 			r_cast::array($shitlist);
 		}
 

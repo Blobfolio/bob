@@ -98,7 +98,7 @@ abstract class mike_wp extends mike {
 
 		// Run Grunt build task.
 		if (static::USE_GRUNT) {
-			io::grunt_task(static::get_plugin_dir(), static::GRUNT_TASK);
+			io::grunt_task(static::get_plugin_dir(), static::USE_GRUNT);
 		}
 
 		// If we're patching classes, PHPAB will get run anyway.
@@ -187,7 +187,7 @@ abstract class mike_wp extends mike {
 		$plugin_dir = static::get_plugin_dir();
 
 		// Parse the current version.
-		$file = static::$plugin_dir . 'index.php';
+		$file = static::get_plugin_dir() . 'index.php';
 		if (!is_file($file)) {
 			log::error('Could not locate main plugin file.');
 		}
@@ -400,6 +400,11 @@ abstract class mike_wp extends mike {
 
 		// Doing a zip?
 		if ('zip' === static::RELEASE_TYPE) {
+			// Probably not in build or plugins.
+			if (defined('BOB_ROOT_DIR')) {
+				$root = dirname(BOB_ROOT_DIR) . '/';
+			}
+
 			// Look for a few common places.
 			foreach (array('release', 'releases', 'repo') as $v) {
 				if (is_dir("{$root}{$v}/")) {

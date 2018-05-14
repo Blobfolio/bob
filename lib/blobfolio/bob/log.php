@@ -358,7 +358,7 @@ class log {
 	 * @param string $str String.
 	 * @return bool|string String.
 	 */
-	protected static function wordwrap_cut(string &$str) {
+	public static function wordwrap_cut(string &$str) {
 		// If the string has no length, we're done!
 		if (!$str) {
 			$str = '';

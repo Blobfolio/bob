@@ -187,7 +187,7 @@ class format {
 		if ($seconds >= 60) {
 			$minutes = floor($seconds / 60);
 			$seconds -= ($minutes * 60);
-			$out[] = v_format::inflect($hours, '%d minute', '%d minutes');
+			$out[] = v_format::inflect($minutes, '%d minute', '%d minutes');
 		}
 
 		$seconds = round($seconds, $precision);

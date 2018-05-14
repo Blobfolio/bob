@@ -86,16 +86,20 @@ abstract class mike {
 			}
 		}
 
-		// Make sure required files are present.
-		foreach (static::REQUIRED_FILES as $v) {
-			io::require_file($v);
-		}
-
 		// Download requirements.
 		if (count(static::REQUIRED_DOWNLOADS)) {
 			log::print('Downloading required file(s)…');
-			io::download(static::SETUP_DOWNLOADS);
+			static::pre_required_downloads();
+			io::download(static::REQUIRED_DOWNLOADS);
+			static::post_required_downloads();
 		}
+
+		// Make sure required files are present.
+		static::pre_required_files();
+		foreach (static::REQUIRED_FILES as $v) {
+			io::require_file($v);
+		}
+		static::post_required_files();
 
 		static::pre_actions();
 
@@ -221,6 +225,46 @@ abstract class mike {
 	 * @return void Nothing.
 	 */
 	protected static function check_requirements() {
+	}
+
+	/**
+	 * Overload: Pre-Downloads
+	 *
+	 * Run specific code before automatic downloading.
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function pre_required_downloads() {
+	}
+
+	/**
+	 * Overload: Post-Downloads
+	 *
+	 * Run specific code after automatic downloading.
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function post_required_downloads() {
+	}
+
+	/**
+	 * Overload: Pre-Files
+	 *
+	 * Run specific code before automatic file checks.
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function pre_required_files() {
+	}
+
+	/**
+	 * Overload: Post-Files
+	 *
+	 * Run specific code after automatic file checks.
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function post_required_files() {
 	}
 
 	/**
