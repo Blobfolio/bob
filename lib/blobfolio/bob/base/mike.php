@@ -137,7 +137,6 @@ abstract class mike {
 		static::post_compile();
 
 		echo "\n\n";
-		exit(0);
 	}
 
 	/**
