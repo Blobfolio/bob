@@ -36,8 +36,10 @@ class log {
 	 *
 	 * @param string $message Message.
 	 * @param bool $inline Inline.
+	 * @param bool $preline Insert preline.
+	 * @return void Nothing.
 	 */
-	public static function print(string $message, bool $inline=true) {
+	public static function print(string $message, bool $inline=true, bool $preline=null) {
 		// Prefix with our bullet style. This happens for pretty much
 		// everything other than headers.
 		if ($inline) {
@@ -47,8 +49,11 @@ class log {
 		// Wrap long lines.
 		static::wordwrap($message);
 
-		// Outline messages get a leading line break.
-		if (!$inline) {
+		// Outline messages usually get a leading line break.
+		if (is_null($preline)) {
+			$preline = !$inline;
+		}
+		if ($preline) {
 			$message = "\n$message";
 		}
 
