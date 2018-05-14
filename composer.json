@@ -31,6 +31,10 @@
     "vendor-dir": "lib\/vendor",
     "preferred-install": "dist"
   },
+  "scripts": {
+    "post-update-cmd": "blobfolio\\bob\\himself::update",
+    "post-install-cmd": "blobfolio\\bob\\himself::install"
+  },
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
