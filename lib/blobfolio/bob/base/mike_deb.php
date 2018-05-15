@@ -212,29 +212,6 @@ abstract class mike_deb extends mike {
 	}
 
 	/**
-	 * Get Size
-	 *
-	 * We can usually calculate this automatically.
-	 *
-	 * @return int Size.
-	 */
-	protected static function get_package_size() {
-		$size = 0;
-
-		// Size the whole working directory.
-		if (static::$_working_dir && is_dir(static::$_working_dir)) {
-			$size += v_file::dirsize(static::$_working_dir);
-
-			// Subtract the DEBIAN folder.
-			if (is_dir(static::$_working_dir . 'DEBIAN/')) {
-				$size -= v_file::dirsize(static::$_working_dir . 'DEBIAN/');
-			}
-		}
-
-		return $size;
-	}
-
-	/**
 	 * Get Skel Directory
 	 *
 	 * This should point to miscellaneous template files.

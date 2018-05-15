@@ -329,5 +329,41 @@ abstract class mike {
 		return static::$_working_dir;
 	}
 
+	/**
+	 * Get Version
+	 *
+	 * This isn't automatically called by Mike, but some child classes
+	 * might use it.
+	 *
+	 * @return string Version.
+	 */
+	protected static function get_package_version() {
+		return static::$_version;
+	}
+
+	/**
+	 * Get Size
+	 *
+	 * This isn't automatically called by Mike, but some child classes
+	 * might use it.
+	 *
+	 * @return int Size.
+	 */
+	protected static function get_package_size() {
+		$size = 0;
+
+		// Size the whole working directory.
+		if (static::$_working_dir && is_dir(static::$_working_dir)) {
+			$size += v_file::dirsize(static::$_working_dir);
+
+			// Subtract the DEBIAN folder.
+			if (is_dir(static::$_working_dir . 'DEBIAN/')) {
+				$size -= v_file::dirsize(static::$_working_dir . 'DEBIAN/');
+			}
+		}
+
+		return $size;
+	}
+
 	// ----------------------------------------------------------------- end overload
 }
