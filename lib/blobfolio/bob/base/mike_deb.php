@@ -219,15 +219,11 @@ abstract class mike_deb extends mike {
 	 * @return string Source.
 	 */
 	protected static function get_skel_dir() {
-		$path = '';
-
 		// Try to discover it. Individual builders can always override
 		// this.
-		if (defined('BOB_ROOT_DIR')) {
-			$path = BOB_ROOT_DIR . 'skel/';
-			if (!is_dir($path)) {
-				$path = '';
-			}
+		$path = BOB_ROOT_DIR . 'skel/';
+		if (!is_dir($path)) {
+			$path = '';
 		}
 
 		return $path;
@@ -242,11 +238,6 @@ abstract class mike_deb extends mike {
 	 * @return string Source.
 	 */
 	protected static function get_release_path() {
-		// Start with the plugin.
-		if (!defined('BOB_ROOT_DIR')) {
-			log::error('Missing BOB_ROOT_DIR.');
-		}
-
 		$path = BOB_ROOT_DIR;
 
 		// Doing a zip?

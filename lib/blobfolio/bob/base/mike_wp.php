@@ -306,20 +306,16 @@ abstract class mike_wp extends mike {
 	 * @return string Source.
 	 */
 	protected static function get_plugin_dir() {
-		$path = '';
-
 		// Try to discover it. Individual builders can always override
 		// this.
-		if (defined('BOB_ROOT_DIR')) {
-			$dirs = array('trunk', 'plugin', 'wp');
-			if (static::SLUG) {
-				$dirs[] = static::SLUG;
-			}
-			foreach ($dirs as $v) {
-				$path = dirname(BOB_ROOT_DIR) . "/$v/";
-				if (is_dir($path)) {
-					break;
-				}
+		$dirs = array('trunk', 'plugin', 'wp');
+		if (static::SLUG) {
+			$dirs[] = static::SLUG;
+		}
+		foreach ($dirs as $v) {
+			$path = dirname(BOB_ROOT_DIR) . "/$v/";
+			if (is_dir($path)) {
+				break;
 			}
 		}
 
@@ -334,15 +330,11 @@ abstract class mike_wp extends mike {
 	 * @return string Source.
 	 */
 	protected static function get_skel_dir() {
-		$path = '';
-
 		// Try to discover it. Individual builders can always override
 		// this.
-		if (defined('BOB_ROOT_DIR')) {
-			$path = BOB_ROOT_DIR . 'skel/';
-			if (!is_dir($path)) {
-				$path = '';
-			}
+		$path = BOB_ROOT_DIR . 'skel/';
+		if (!is_dir($path)) {
+			$path = '';
 		}
 
 		return $path;
@@ -414,9 +406,7 @@ abstract class mike_wp extends mike {
 		// Doing a zip?
 		if ('zip' === static::RELEASE_TYPE) {
 			// Probably not in build or plugins.
-			if (defined('BOB_ROOT_DIR')) {
-				$root = dirname(BOB_ROOT_DIR) . '/';
-			}
+			$root = dirname(BOB_ROOT_DIR) . '/';
 
 			// Look for a few common places.
 			foreach (array('release', 'releases', 'repo') as $v) {
@@ -430,7 +420,7 @@ abstract class mike_wp extends mike {
 		}
 		// Copying files?
 		elseif ('copy' === static::RELEASE_TYPE) {
-			if (defined('BOB_ROOT_DIR') && ('trunk' === basename($path))) {
+			if ('trunk' === basename($path)) {
 				$path = dirname(BOB_ROOT_DIR) . '/';
 			}
 			$path .= static::SLUG . '/';
