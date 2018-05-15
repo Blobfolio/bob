@@ -431,7 +431,7 @@ abstract class mike_wp extends mike {
 		// Copying files?
 		elseif ('copy' === static::RELEASE_TYPE) {
 			if (defined('BOB_ROOT_DIR') && ('trunk' === basename($path))) {
-				$path = BOB_ROOT_DIR;
+				$path = dirname(BOB_ROOT_DIR) . '/';
 			}
 			$path .= static::SLUG . '/';
 		}
