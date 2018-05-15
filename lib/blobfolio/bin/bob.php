@@ -35,7 +35,7 @@ $flags = himself::get_cli_flags();
 // Append our undocumented "release" flag, used to bump bob's package
 // version.
 $flags['long'][] = 'release';
-$args = getopt(implode('', $flags['short']), $flags['long'], $end);
+$args = getopt(implode('', $flags['short']), $flags['long']);
 
 // Show help screen.
 if (isset($args['h']) || isset($args['help'])) {
@@ -58,7 +58,38 @@ if (isset($args['all'])) {
 }
 // Run specific builders maybe.
 else {
-	$builders = array_slice($argv, $end);
+	$builders = array();
+
+	// We have to parse this manually because PHP didn't add the option
+	// index argument to getopt() until PHP 7.1.
+	if (isset($argv[1])) {
+		// First pass, find the last index of a named argument.
+		$last_index = 0;
+		for ($x = 1; $x < count($argv); ++$x) {
+			// Longopt.
+			if (0 === strpos($argv[$x], '--')) {
+				$nice = substr($argv[$x], 2);
+			}
+			// Shortopt.
+			elseif (0 === strpos($argv[$x], '-')) {
+				$nice = substr($argv[$x], 1);
+			}
+
+			if (isset($args[$nice])) {
+				$last_index = $x;
+			}
+		}
+
+		// Increase by one and grab anything non-slashy.
+		++$last_index;
+		if (count($argv) > $last_index) {
+			for ($x = $last_index; $x < count($argv); ++$x) {
+				if (preg_match('/^[a-z\d_]+$/', $argv[$x])) {
+					$builders[] = $argv[$x];
+				}
+			}
+		}
+	}
 }
 
 // Run with specific builders.

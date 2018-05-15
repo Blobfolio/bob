@@ -1,4 +1,4 @@
 /bob
-/package-lock.json
-/node_modules/
 /composer.lock
+/node_modules/
+/package-lock.json
