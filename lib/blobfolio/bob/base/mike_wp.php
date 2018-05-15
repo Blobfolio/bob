@@ -138,6 +138,8 @@ abstract class mike_wp extends mike {
 
 		log::print('Cleaning up clone…');
 		io::prune(static::$_working_dir, static::get_shitlist());
+
+		static::build_working();
 	}
 
 	/**
