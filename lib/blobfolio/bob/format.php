@@ -8,6 +8,7 @@
 
 namespace blobfolio\bob;
 
+use \blobfolio\common\cast as v_cast;
 use \blobfolio\common\format as v_format;
 use \blobfolio\common\mb as v_mb;
 use \blobfolio\common\ref\cast as r_cast;
