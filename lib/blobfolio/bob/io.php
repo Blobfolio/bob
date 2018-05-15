@@ -45,10 +45,11 @@ class io {
 	);
 
 	// Some binaries should always be downloaded fresh.
-	const REMOTE_BINARIES = array(
-		'composer'=>'https://getcomposer.org/composer.phar',
-		'phpab'=>'https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar',
-	);
+	const COMPOSER_REPO = 'composer/composer';
+	const COMPOSER_PHAR = 'https://github.com/composer/composer/releases/download/%s/composer.phar';
+
+	const PHPAB_REPO = 'theseer/Autoload';
+	const PHPAB_PHAR = 'https://github.com/theseer/Autoload/releases/download/%s/phpab-%s.phar';
 
 	// Miscellaneous settings.
 	const CACHE_LIFETIME = 7200;			// Time to cache download.
@@ -64,6 +65,9 @@ class io {
 	protected static $_downloads = array();	// Downloaded files.
 
 	protected static $_tmp_dir;				// Temporary files.
+
+	protected static $_composer;			// Location of Composer binary.
+	protected static $_phpab;				// Location of PHPAB binary.
 
 
 
@@ -535,17 +539,27 @@ class io {
 	 * @return bool True/false.
 	 */
 	public static function composer_install(string $dir, string $conf, bool $optimize=false) {
-		log::print('Composer: updating libraries…');
+		// We might need to download it.
+		if (!isset(static::$_composer)) {
+			log::print('Pulling latest Composer release…');
+			$info = static::github_release(static::COMPOSER_REPO, false);
+			$url = sprintf(static::COMPOSER_PHAR, $info['version']);
+			static::$_composer = static::_get_cache_path($url);
 
-		// Download Composer if we don't already have it.
-		if (isset(static::$_downloads[static::REMOTE_BINARIES['composer']])) {
-			$composer = static::$_downloads[static::REMOTE_BINARIES['composer']];
+			// If it doesn't exist at all, download it.
+			if (!is_file(static::$_composer)) {
+				log::print("Downloading Composer v{$info['version']}…");
+				static::$_composer = static::get_url($url, false);
+				chmod(static::$_composer, 0755);
+			}
+			// If it exists from a previous session, make sure it is in
+			// our $_downloads cache.
+			elseif (!isset(static::$_downloads[$url])) {
+				static::$_downloads[$url] = static::$_composer;
+			}
 		}
-		else {
-			log::print('Downloading binary…');
-			$composer = static::get_url(static::REMOTE_BINARIES['composer'], false);
-			@chmod($composer, 0755);
-		}
+
+		log::print('Running Composer…');
 
 		// The directory needs to be valid.
 		r_file::path($dir, true);
@@ -590,7 +604,7 @@ class io {
 		}
 
 		// Compile the command.
-		if (false === ($cmd = static::get_command($composer, $args, true))) {
+		if (false === ($cmd = static::get_command(static::$_composer, $args, true))) {
 			log::error('CLI command (probably) failed.');
 			return false;
 		}
@@ -744,7 +758,7 @@ class io {
 		}
 
 		// Try to run the command!
-		log::print("Grunt: running \033[95;1m{$task}\033[0m…");
+		log::print("Running Grunt \033[2m{$task}\033[0m…");
 		$cmd = static::get_command('grunt', array($task));
 		$result = static::exec($cmd, $dir);
 
@@ -759,17 +773,27 @@ class io {
 	 * @return bool True/false.
 	 */
 	public static function phpab_autoload(string $dir, string $file='') {
-		log::print('PHPAB: generating classmap…');
+		// We might need to download it.
+		if (!isset(static::$_phpab)) {
+			log::print('Pulling latest phpab release…');
+			$info = static::github_release(static::PHPAB_REPO, false);
+			$url = sprintf(static::PHPAB_PHAR, $info['version'], $info['version']);
+			static::$_phpab = static::_get_cache_path($url);
 
-		// Download Composer if we don't already have it.
-		if (isset(static::$_downloads[static::REMOTE_BINARIES['phpab']])) {
-			$phpab = static::$_downloads[static::REMOTE_BINARIES['phpab']];
+			// If it doesn't exist at all, download it.
+			if (!is_file(static::$_phpab)) {
+				log::print("Downloading phpab v{$info['version']}…");
+				static::$_phpab = static::get_url($url, false);
+				chmod(static::$_phpab, 0755);
+			}
+			// If it exists from a previous session, make sure it is in
+			// our $_downloads cache.
+			elseif (!isset(static::$_downloads[$url])) {
+				static::$_downloads[$url] = static::$_phpab;
+			}
 		}
-		else {
-			log::print('Downloading binary…');
-			$phpab = static::get_url(static::REMOTE_BINARIES['phpab'], false);
-			@chmod($phpab, 0755);
-		}
+
+		log::print('Generating phpab classmap…');
 
 		// The directory needs to be valid.
 		r_file::path($dir, true);
@@ -793,7 +817,7 @@ class io {
 			escapeshellarg($dir),
 		);
 
-		$cmd = static::get_command($phpab, $args, true);
+		$cmd = static::get_command(static::$_phpab, $args, true);
 
 		// Try to execute it!
 		$result = static::exec($cmd, $dir);
