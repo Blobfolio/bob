@@ -98,6 +98,8 @@ abstract class mike_deb extends mike {
 	protected static function _build_working() {
 		log::print('Setting up working directory…');
 		static::make_working_dir(static::get_skel_dir());
+
+		static::build_working();
 	}
 
 	/**
@@ -135,6 +137,8 @@ abstract class mike_deb extends mike {
 			v_file::rmdir(static::$_working_dir);
 			static::$_working_dir = null;
 		}
+
+		static::build_release();
 	}
 
 	/**

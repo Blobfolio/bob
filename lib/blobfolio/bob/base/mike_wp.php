@@ -177,6 +177,8 @@ abstract class mike_wp extends mike {
 			v_file::rmdir(static::$_working_dir);
 			static::$_working_dir = null;
 		}
+
+		static::build_release();
 	}
 
 	/**
