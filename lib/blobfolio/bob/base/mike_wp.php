@@ -74,6 +74,10 @@ abstract class mike_wp extends mike {
 	protected static $_working_dir;			// Working files.
 	protected static $_version;
 
+	// A few misc variables for us.
+	protected static $replacements;
+	protected static $has_ns;
+
 
 
 	// -----------------------------------------------------------------
