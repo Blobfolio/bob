@@ -16,6 +16,7 @@ use \blobfolio\bob\log;
 use \blobfolio\common\cli;
 use \blobfolio\common\data;
 use \blobfolio\common\file as v_file;
+use \blobfolio\common\mb as v_mb;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\mb as r_mb;
 
