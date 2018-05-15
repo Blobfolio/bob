@@ -167,8 +167,12 @@ abstract class mike_wp extends mike {
 				v_file::rmdir($path);
 			}
 
-			// Just rename it.
-			rename(static::$_working_dir, static::get_release_path());
+			// Copy and delete because "move" isn't an option. Haha.
+			log::print('Copying one last time…');
+			v_file::copy(static::$_working_dir, static::get_release_path());
+
+			log::print('Removing working directory…');
+			v_file::rmdir(static::$_working_dir);
 			static::$_working_dir = null;
 		}
 	}
@@ -426,6 +430,9 @@ abstract class mike_wp extends mike {
 		}
 		// Copying files?
 		elseif ('copy' === static::RELEASE_TYPE) {
+			if (defined('BOB_ROOT_DIR') && ('trunk' === basename($path))) {
+				$path = BOB_ROOT_DIR;
+			}
 			$path .= static::SLUG . '/';
 		}
 		else {
