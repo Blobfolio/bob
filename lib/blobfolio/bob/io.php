@@ -541,7 +541,7 @@ class io {
 	public static function composer_install(string $dir, string $conf, bool $optimize=false) {
 		// We might need to download it.
 		if (!isset(static::$_composer)) {
-			log::print('Pulling latest Composer release…');
+			log::print('Checking Composer version…');
 			$info = static::github_release(static::COMPOSER_REPO, false);
 			$url = sprintf(static::COMPOSER_PHAR, $info['version']);
 			static::$_composer = static::_get_cache_path($url);
@@ -775,7 +775,7 @@ class io {
 	public static function phpab_autoload(string $dir, string $file='') {
 		// We might need to download it.
 		if (!isset(static::$_phpab)) {
-			log::print('Pulling latest phpab release…');
+			log::print('Checking phpab version…');
 			$info = static::github_release(static::PHPAB_REPO, false);
 			$url = sprintf(static::PHPAB_PHAR, $info['version'], $info['version']);
 			static::$_phpab = static::_get_cache_path($url);
