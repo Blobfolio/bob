@@ -154,7 +154,7 @@ abstract class mike_deb extends mike {
 		// If there is a control file, try to patch it.
 		$control = static::$_working_dir . 'DEBIAN/control';
 		if (is_file($control)) {
-			utility::log('Patching DEBIAN control…');
+			log::print('Patching DEBIAN control…');
 			$tmp = file_get_contents($control);
 			$tmp = str_replace(
 				array(
