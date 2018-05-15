@@ -21,6 +21,7 @@ class log {
 
 	// Various formatting styles.
 	const BULLET = "   \033[2m++\033[0m ";
+	const BULLET2 = "   \033[95;1m??\033[0m ";
 	const ERROR = "\033[31;1mError:\033[0m ";
 	const WARNING = "\033[33;1mWarning:\033[0m ";
 	const SUCCESS = "\033[32;1mSuccess:\033[0m ";
@@ -135,7 +136,7 @@ class log {
 		$answer = '';
 		while (!$answer) {
 			// Ask it.
-			static::print($message);
+			static::print(static::BULLET2 . $message, false, false);
 			if ($pretty) {
 				static::print($pretty);
 			}
