@@ -37,6 +37,9 @@ $flags = himself::get_cli_flags();
 $flags['long'][] = 'release';
 $args = getopt(implode('', $flags['short']), $flags['long']);
 
+// Turn debugging output on or off.
+define('BOB_DEBUG', isset($args['debug']));
+
 // Show help screen.
 if (isset($args['h']) || isset($args['help'])) {
 	himself::help();
@@ -86,7 +89,7 @@ else {
 		++$last_index;
 		if (count($argv) > $last_index) {
 			for ($x = $last_index; $x < count($argv); ++$x) {
-				if (preg_match('/^[a-z\d_]+$/', $argv[$x])) {
+				if (0 !== strpos($args[$x], '-')) {
 					$builders[] = $argv[$x];
 				}
 			}

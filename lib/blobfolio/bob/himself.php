@@ -32,6 +32,11 @@ class himself {
 			'example'=>'bob --all',
 		),
 		array(
+			'flags'=>array('--debug'),
+			'description'=>'Print debug information during build.',
+			'example'=>'bob --debug',
+		),
+		array(
 			'flags'=>array('-h', '--help'),
 			'description'=>'Print this screen.',
 			'example'=>'bob --help',
@@ -191,8 +196,12 @@ class himself {
 	 * @return void Nothing.
 	 */
 	public static function start($builders=null) {
+		log::debug('Builder bootstrap started.');
+
 		if (!is_null($builders)) {
 			r_cast::array($builders);
+
+			log::debug('Requested builders: ' . implode('; ', $builders));
 
 			foreach ($builders as $k=>$v) {
 				if (false === ($builders[$k] = static::get_builder($v))) {
@@ -201,8 +210,12 @@ class himself {
 			}
 		}
 		else {
+			log::debug('No specific builders requested.');
+
 			// All builders.
 			$tmp = static::get_builders();
+
+			log::debug('Possible builders: ' . implode('; ', $tmp));
 
 			// If there is just one, run with it.
 			if (count($tmp) === 1) {
@@ -224,8 +237,11 @@ class himself {
 
 		// Run them!
 		foreach ($builders as $build) {
+			log::debug("Running {$build}…");
 			$build::compile();
 		}
+
+		log::debug('Bob is going to bed now.');
 
 		exit(0);
 	}

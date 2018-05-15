@@ -60,6 +60,9 @@ abstract class mike {
 	public static function compile() {
 		$start = microtime(true);
 		$class = get_called_class();
+
+		log::debug("Starting build $class.");
+
 		static::pre_compile();
 
 		// Check requirements.
@@ -157,6 +160,11 @@ abstract class mike {
 	 * @return void Nothing.
 	 */
 	protected static function _check_requirements() {
+		// We should have our BOB constants.
+		if (!defined('BOB_ROOT_DIR') || !defined('BOB_BUILDER_DIR')) {
+			log::error('Missing path constants.');
+		}
+
 		// Always require CLI connections.
 		if (!cli::is_cli()) {
 			log::error('Bob must be run in CLI mode.', false);
