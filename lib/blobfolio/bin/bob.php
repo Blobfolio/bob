@@ -66,6 +66,8 @@ else {
 		// First pass, find the last index of a named argument.
 		$last_index = 0;
 		for ($x = 1; $x < count($argv); ++$x) {
+			$nice = $argv[$x];
+
 			// Longopt.
 			if (0 === strpos($argv[$x], '--')) {
 				$nice = substr($argv[$x], 2);
