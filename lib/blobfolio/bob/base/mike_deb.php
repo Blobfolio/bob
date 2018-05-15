@@ -118,10 +118,6 @@ abstract class mike_deb extends mike {
 	protected static function _build_release() {
 		if ('deb' === static::RELEASE_TYPE) {
 			io::deb(static::$_working_dir, static::get_release_path());
-
-			log::print('Removing working directory…');
-			v_file::rmdir(static::$_working_dir);
-			static::$_working_dir = null;
 		}
 		elseif ('copy' === static::RELEASE_TYPE) {
 			$path = static::get_release_path();
@@ -132,13 +128,13 @@ abstract class mike_deb extends mike {
 			// Copy and delete because "move" isn't an option. Haha.
 			log::print('Copying one last time…');
 			v_file::copy(static::$_working_dir, static::get_release_path());
-
-			log::print('Removing working directory…');
-			v_file::rmdir(static::$_working_dir);
-			static::$_working_dir = null;
 		}
 
 		static::build_release();
+
+		log::print('Removing working directory…');
+		v_file::rmdir(static::$_working_dir);
+		static::$_working_dir = null;
 	}
 
 	/**
