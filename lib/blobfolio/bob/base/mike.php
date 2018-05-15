@@ -108,13 +108,17 @@ abstract class mike {
 			log::title($title);
 
 			foreach ($actions as $action) {
-				// Some miscellaneous callable source.
-				if (is_callable($action)) {
-					$action();
-				}
 				// A local method.
-				elseif (method_exists($class, $action)) {
+				if (
+					is_string($action) &&
+					preg_match('/^[a-z\d_]+$/i', $action) &&
+					method_exists($class, $action)
+				) {
 					static::$action();
+				}
+				// Some miscellaneous callable source.
+				elseif (is_callable($action)) {
+					$action();
 				}
 				else {
 					log::error("Invalid method: $action");
