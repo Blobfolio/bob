@@ -1,5 +1,5 @@
 {
-    "name": "bob",
+    "name": "blobfolio\/bob",
     "description": "A simple release builder framework.",
     "version": "1.0.0",
     "type": "library",
