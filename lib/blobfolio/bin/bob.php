@@ -80,6 +80,7 @@ else {
 				$nice = substr($argv[$x], 1);
 			}
 
+			// This was already handled.
 			if (isset($args[$nice])) {
 				$last_index = $x;
 			}
@@ -89,7 +90,7 @@ else {
 		++$last_index;
 		if (count($argv) > $last_index) {
 			for ($x = $last_index; $x < count($argv); ++$x) {
-				if (0 !== strpos($args[$x], '-')) {
+				if (0 !== strpos($argv[$x], '-')) {
 					$builders[] = $argv[$x];
 				}
 			}
