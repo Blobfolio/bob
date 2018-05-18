@@ -631,6 +631,9 @@ abstract class mike_wp extends mike {
 			}
 		}
 
+		// Even more patching.
+		static::post_patch_classes();
+
 		// Re-run PHPAB to update classmap.
 		io::phpab_autoload(static::get_plugin_dir(), static::get_phpab_path());
 	}
@@ -643,6 +646,14 @@ abstract class mike_wp extends mike {
 	 */
 	protected static function patch_classes(string &$content) {
 		return 0;
+	}
+
+	/**
+	 * Overload: More Class Patching
+	 *
+	 * @return void Nothing.
+	 */
+	protected static function post_patch_classes() {
 	}
 
 	// ----------------------------------------------------------------- end class patching
