@@ -65,6 +65,7 @@ abstract class mike_wp extends mike {
 	const PATCH_CLASSES = false;			// Patch classes?
 	const NAMESPACE_SWAP = '';				// Move blobfolio libs.
 	const NAMESPACELESS = array();			// Namespaces for globals.
+	const NAMESPACE_STUBS = array();		// Partial use statements.
 
 	// Build a release, either zip or copy.
 	const RELEASE_TYPE = 'zip';
@@ -587,6 +588,14 @@ abstract class mike_wp extends mike {
 							elseif (isset($r_namespaces[$matches[2]])) {
 								++static::$replacements;
 								return "use \\{$r_namespaces[$matches[2]]}{$matches[3]};";
+							}
+							elseif (count(static::NAMESPACE_STUBS)) {
+								foreach (static::NAMESPACE_STUBS as $v) {
+									if (0 === strpos($matches[2], $v)) {
+										++static::$replacements;
+										return 'use \\' . static::NAMESPACE_SWAP . "{$matches[2]}{$matches[3]};";
+									}
+								}
 							}
 						}
 
