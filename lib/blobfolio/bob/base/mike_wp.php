@@ -446,7 +446,7 @@ abstract class mike_wp extends mike {
 		$shitlist = is_array(static::SHITLIST) ? static::SHITLIST : array();
 
 		if (static::USE_IO_SHITLIST || !is_array(static::SHITLIST)) {
-			$shitlist = array_merge($shitlist, static::SHITLIST);
+			$shitlist = array_merge($shitlist, io::SHITLIST);
 			sort($shitlist);
 		}
 
@@ -661,8 +661,4 @@ abstract class mike_wp extends mike {
 	}
 
 	// ----------------------------------------------------------------- end class patching
-
-
-
-
 }
