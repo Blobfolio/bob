@@ -1129,8 +1129,33 @@ class io {
 			log::error("Invalid URL: $url");
 		}
 
+		// Start by hashing the file.
+		$hash = md5($tmp);
+
+		// But let's try to preserve the file extension.
+		if (false !== strpos(strtolower($url), '.tar.gz')) {
+			$hash .= '.tar.gz';
+		}
+		else {
+			// Beceause this is a URL, there might be queries or hashes
+			// to chop.
+			$path = parse_url($url, PHP_URL_PATH);
+			if ($path) {
+				if (false !== strpos($path, '/')) {
+					$path = basename($path);
+				}
+
+				if (false !== ($ext = strrchr($path, '.'))) {
+					$ext = strtolower(substr($ext, 1));
+					if (preg_match('/^[a-z\d]+$/', $ext)) {
+						$hash .= ".{$ext}";
+					}
+				}
+			}
+		}
+
 		// No need to overthink it.
-		return static::get_tmp_dir(md5($tmp));
+		return static::get_tmp_dir($hash);
 	}
 
 	/**
