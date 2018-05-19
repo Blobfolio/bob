@@ -53,7 +53,7 @@ class io {
 
 	// Miscellaneous settings.
 	const CACHE_LIFETIME = 7200;			// Time to cache download.
-	const REMOTE_CHUNK = 50;				// URLs to pull en masse.
+	const REMOTE_CHUNK = 75;				// URLs to pull en masse.
 	const REMOTE_TIMEOUT = 20;				// Download connect timeout.
 
 	// URL patterns for Github.
@@ -1252,6 +1252,8 @@ class io {
 		}
 
 		sort($urls);
+		$length = count($urls);
+		$num = 0;
 
 		// Process the URLs in chunks.
 		$urls = array_chunk($urls, static::REMOTE_CHUNK);
@@ -1272,11 +1274,29 @@ class io {
 				curl_multi_add_handle($multi, $curls[$url]);
 			}
 
+			// There could be a lot of files; it's nice to note the progress.
+			$length_do = count($chunk);
+			$num_last = 0;
+
 			// Process requests.
 			do {
 				curl_multi_exec($multi, $running);
 				curl_multi_select($multi);
+
+				// Note our progress.
+				$finished = $length_do - $running;
+				if ($finished !== $num_last) {
+					$num += ($finished - $num_last);
+					$num_last = $finished;
+					log::progress($num / $length);
+				}
 			} while ($running > 0);
+
+			// Make sure our total is accurate.
+			if ($num_last !== $length_do) {
+				$num += ($length_do - $num_last);
+				log::progress($num / $length);
+			}
 
 			// Update information.
 			foreach ($chunk as $url) {
@@ -1297,6 +1317,9 @@ class io {
 
 			curl_multi_close($multi);
 		}
+
+		// Print a success line.
+		log::success('Download complete.');
 
 		// Return what we've got!
 		ksort($out);
