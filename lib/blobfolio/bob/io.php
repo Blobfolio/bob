@@ -417,7 +417,13 @@ class io {
 				chmod($v, 0755);
 			}
 			elseif (is_file($v)) {
-				chmod($v, 0644);
+				// Keep executableness, but otherwise lower perms.
+				if (is_executable($v)) {
+					chmod($v, 0755);
+				}
+				else {
+					chmod($v, 0644);
+				}
 			}
 		}
 	}
