@@ -666,13 +666,9 @@ class io {
 					$rules[$k] = array_pop($rules[$k]);
 
 					$rules[$k] = preg_replace('/\s/u', '', $rules[$k]);
-					if (!$rules[$k]) {
+					if (!$rules[$k] || (0 === strpos($rules[$k], '#'))) {
 						unset($rules[$k]);
 						continue;
-					}
-					// If this isn't slashed, we need to make it globby.
-					if (0 !== strpos($rules[$k], '/')) {
-						$rules[$k] = "**/{$rules[$k]}";
 					}
 
 					r_file::path($base, true);
@@ -682,6 +678,13 @@ class io {
 					}
 					$base = preg_replace($pattern, '/', $base);
 					$base = rtrim($base, '/');
+
+					// If this isn't slashed, we need to make it globby.
+					if ($base) {
+						if (0 !== strpos($rules[$k], '/')) {
+							$rules[$k] = "**/{$rules[$k]}";
+						}
+					}
 
 					$rules[$k] = "{$base}{$rules[$k]}";
 					continue;
@@ -745,7 +748,7 @@ class io {
 				}
 
 				// Ignore empty lines.
-				if (!$line) {
+				if (!$line || (0 === strpos($line, '#'))) {
 					continue;
 				}
 
