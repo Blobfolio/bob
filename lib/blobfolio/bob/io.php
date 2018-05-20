@@ -681,11 +681,11 @@ class io {
 
 					// If this isn't slashed, we need to make it globby.
 					if ($base) {
-						if (
-							(0 !== strpos($rules[$k], '/')) &&
-							(0 !== strpos($line, '**/'))
-						) {
-							$rules[$k] = "**/{$rules[$k]}";
+						if (0 === strpos($rules[$k], '**/')) {
+							$rules[$k] = "/{$rules[$k]}";
+						}
+						elseif (0 !== strpos($rules[$k], '/')) {
+							$rules[$k] = "/**/{$rules[$k]}";
 						}
 					}
 
@@ -745,8 +745,11 @@ class io {
 
 				// If this isn't slashed, we need to make it globby.
 				if ($base) {
-					if ((0 !== strpos($line, '/')) && (0 !== strpos($line, '**/'))) {
-						$line = "**/$line";
+					if (0 === strpos($line, '**/')) {
+						$line = "/$line";
+					}
+					elseif (0 !== strpos($line, '/')) {
+						$line = "/**/$line";
 					}
 					// Otherwise maybe strip off the base path.
 					else {
