@@ -69,13 +69,16 @@ class log {
 	 * @param string $message Prompt.
 	 * @param string $default Default answer.
 	 * @param mixed $set Default answer or possible answers.
+	 * @param bool $case Case sensitive.
 	 * @return string Answer.
 	 */
-	public static function prompt(string $message, string $default='', $set=null) {
+	public static function prompt(string $message, string $default='', $set=null, bool $case=false) {
 		$pretty = '';
 
 		r_sanitize::whitespace($default);
-		r_mb::strtolower($default);
+		if (!$case) {
+			r_mb::strtolower($default);
+		}
 
 		// Verify the fixed list of responses, if any.
 		if (!is_array($set) || count($set) < 2) {
@@ -90,15 +93,17 @@ class log {
 					continue;
 				}
 
-				r_mb::strtolower($set[$k]);
 				r_sanitize::whitespace($set[$k]);
+				if (!$case) {
+					r_mb::strtolower($set[$k]);
+				}
 				if (!$set[$k]) {
 					unset($set[$k]);
 					continue;
 				}
 
 				if ($default === $set[$k]) {
-					$pretty[] = "\033[1m" . v_mb::strtoupper($set[$k]) . "\033[0m";
+					$pretty[] = "\033[1m" . ($case ? v_mb::strtoupper($set[$k]) : $set[$k]) . "\033[0m";
 				}
 				else {
 					$pretty[] = $set[$k];
@@ -150,7 +155,9 @@ class log {
 				// Load the answer.
 				$answer = fgets($handle);
 				r_sanitize::whitespace($answer);
-				r_mb::strtolower($answer);
+				if (!$case) {
+					r_mb::strtolower($answer);
+				}
 
 				// Assign it to the default?
 				if (!$answer && $default) {
