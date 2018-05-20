@@ -689,7 +689,6 @@ class io {
 		}
 
 		// We always want to ignore these.
-		$rules[] = '**/*.git';
 		$rules[] = '**/.sass-cache/';
 		$rules[] = '**/composer.lock';
 		$rules[] = '**/node_modules/';

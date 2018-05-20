@@ -1,4 +1,3 @@
-**/*.git
 **/.sass-cache/
 **/composer.lock
 **/node_modules/
