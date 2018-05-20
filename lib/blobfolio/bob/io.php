@@ -8,10 +8,10 @@
 
 namespace blobfolio\bob;
 
-use \blobfolio\bob\log;
 use \blobfolio\common\cli;
 use \blobfolio\common\data;
 use \blobfolio\common\file as v_file;
+use \blobfolio\common\file as v_format;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\file as r_file;
 use \blobfolio\common\ref\format as r_format;
@@ -623,6 +623,152 @@ class io {
 		}
 
 		return (false !== $result);
+	}
+
+	/**
+	 * Gitignore Consolidation
+	 *
+	 * Merge all .gitignore files into a single, root-level file.
+	 *
+	 * @param string $dir Directory.
+	 * @param array $rules Additional rules to add.
+	 * @return void Nothing.
+	 */
+	public static function gitignore(string $dir, $rules=null) {
+		r_file::path($dir, true);
+		if (!is_dir($dir)) {
+			return;
+		}
+
+		// Paths merged from child ignores will need to be relative to
+		// the root.
+		$pattern = '#^' . preg_quote($dir, '#') . '#';
+
+		// Start with what we were passed, if anything.
+		r_cast::array($rules);
+		if (count($rules)) {
+			foreach ($rules as $k=>$v) {
+				// If this is an array, we expect a rule and a relative,
+				// path, in that order.
+				if (is_array($rules[$k])) {
+					if (count($rules[$k]) !== 2) {
+						unset($rules[$k]);
+						continue;
+					}
+
+					$base = array_pop($rules[$k]);
+					$rules[$k] = array_pop($rules[$k]);
+
+					$rules[$k] = preg_replace('/\s/u', '', $rules[$k]);
+					if (!$rules[$k]) {
+						unset($rules[$k]);
+						continue;
+					}
+					// If this isn't slashed, we need to make it globby.
+					if (0 !== strpos($rules[$k], '/')) {
+						$rules[$k] = "**/{$rules[$k]}";
+					}
+
+					r_file::path($base, true);
+					if (!is_dir($base) || false === strpos($base, $dir)) {
+						unset($rules[$k]);
+						continue;
+					}
+					$base = preg_replace($pattern, '/', $base);
+					$base = rtrim($base, '/');
+
+					$rules[$k] = "{$base}{$rules[$k]}";
+					continue;
+				}
+
+				$rules[$k] = preg_replace('/\s/u', '', $rules[$k]);
+				if (!$rules[$k]) {
+					unset($rules[$k]);
+				}
+			}
+		}
+
+		// We always want to ignore these.
+		$rules[] = '**/*.git';
+		$rules[] = '**/.sass-cache/';
+		$rules[] = '**/composer.lock';
+		$rules[] = '**/node_modules/';
+		$rules[] = '**/package-lock.json';
+
+		// Another pattern that takes into account our mandatory rules.
+		$pattern2 = '#/(\.git|\.sass-cache|node_modules)/#';
+
+		// Keep track of our ignore files as we'll be deleting these at
+		// the end.
+		$ignore_files = array();
+
+		// Find all files.
+		$files = v_file::scandir($dir, true, false);
+		foreach ($files as $v) {
+			// Most files are not .gitignore, and some of those might be
+			// in redundant exclude paths.
+			if ('.gitignore' !== basename($v)) {
+				continue;
+			}
+
+			$ignore_files[] = $v;
+
+			// This might not be a file we actually care about, though.
+			if (preg_match($pattern2, $v)) {
+				continue;
+			}
+
+			// Open it.
+			$tmp = file_get_contents($v);
+			$tmp = format::lines_to_array($tmp);
+			$base = preg_replace($pattern, '/', dirname($v) . '/');
+			$base = rtrim($base, '/');
+
+			foreach ($tmp as $line) {
+				$line = preg_replace('/\s/u', '', $line);
+
+				// If this isn't slashed, we need to make it globby.
+				if (0 !== strpos($line, '/')) {
+					$line = "**/$line";
+				}
+				// Otherwise maybe strip off the base path.
+				else {
+					$line = preg_replace($pattern, '/', $line);
+				}
+
+				$rule = "{$base}{$line}";
+
+				// Check patterns one more time.
+				if (
+					!preg_match($pattern2, $rule) &&
+					!in_array("**{$rule}", $rules, true)
+				) {
+					$rules[] = $rule;
+				}
+			}
+		}
+
+		// Go ahead and trim duplicates.
+		$rules = array_unique($rules);
+		sort($rules);
+
+		// Remove extraneous .gitignore files.
+		if (count($ignore_files)) {
+			log::print("Removing extraneous \033[2m.gitignore\033[0m files…");
+			foreach ($ignore_files as $v) {
+				unlink($v);
+			}
+		}
+
+		// Show what we found.
+		log::print("Adding rules to \033[2m.gitignore\033[0m…");
+		foreach ($rules as $v) {
+			log::print("\033[2m$v\033[0m");
+		}
+
+		// Now we should actually save it. Haha.
+		file_put_contents("{$dir}.gitignore", implode("\n", $rules) . "\n");
+		chmod("{$dir}.gitignore", 0644);
 	}
 
 	/**

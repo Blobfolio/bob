@@ -166,21 +166,29 @@ class himself {
 		chmod($file, 0755);
 
 		// Add Bob to the gitignore.
-		log::print('Adding git exception…');
-		$file = "{$root_dir}.gitignore";
-		if (is_file($file)) {
-			$template = file_get_contents($file);
-			$template = format::lines_to_array($template);
+		$rules = array(
+			array(
+				'/bob',
+				$root_dir,
+			),
+			array(
+				substr($vendor_dir, strlen($root_dir) - 1),
+				$root_dir,
+			),
+		);
+
+		$ignore_dir = log::prompt("Where should the \033[2m.gitignore\033[0m be placed?", "{$root_dir}", null, true);
+		// We actually want a directory.
+		if ('.gitignore' === substr($ignore_dir, 10)) {
+			$ignore_dir = substr($ignore_dir, 0, -10);
 		}
-		else {
-			$template = array();
+		r_file::path($ignore_dir, true);
+		if (!is_dir($ignore_dir)) {
+			log::warning("Invalid \033[2m.gitignore\033[0m directory; using the project root instead.");
+			$ignore_dir = $root_dir;
 		}
-		if (!in_array('/bob', $template, true)) {
-			$template[] = '/bob';
-		}
-		sort($template);
-		file_put_contents($file, implode("\n", $template));
-		chmod($file, 0644);
+
+		io::gitignore($root_dir, $rules);
 
 		// We're done!
 		log::success('Bob has been saved!');
