@@ -728,12 +728,19 @@ class io {
 				$line = preg_replace('/\s/u', '', $line);
 
 				// If this isn't slashed, we need to make it globby.
-				if (0 !== strpos($line, '/')) {
-					$line = "**/$line";
+				if ($base) {
+					if (0 !== strpos($line, '/')) {
+						$line = "**/$line";
+					}
+					// Otherwise maybe strip off the base path.
+					else {
+						$line = preg_replace($pattern, '/', $line);
+					}
 				}
-				// Otherwise maybe strip off the base path.
-				else {
-					$line = preg_replace($pattern, '/', $line);
+
+				// Ignore empty lines.
+				if (!$line) {
+					continue;
 				}
 
 				$rule = "{$base}{$line}";
