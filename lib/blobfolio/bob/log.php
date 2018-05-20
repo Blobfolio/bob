@@ -8,7 +8,7 @@
 
 namespace blobfolio\bob;
 
-use \blobfolio\bob\format;
+use \blobfolio\common\file as v_file;
 use \blobfolio\common\mb as v_mb;
 use \blobfolio\common\ref\cast as r_cast;
 use \blobfolio\common\ref\mb as r_mb;
@@ -177,7 +177,18 @@ class log {
 
 			// Start by prepopulating the home directory since most
 			// root-level locations will be unreadable.
-			$possible = array('/home/');
+			$possible = array();
+			if (isset($_SERVER['HOME'])) {
+				$possible[] = v_file::trailingslash($_SERVER['HOME']);
+			}
+			else {
+				if (is_dir('/home/')) {
+					$possible[] = '/home/';
+				}
+				if (is_dir('/Users/')) {
+					$possible[] = '/Users/';
+				}
+			}
 			if ($dir_fake && !in_array($dir_fake, $possible, true)) {
 				$possible[] = $dir_fake;
 			}
