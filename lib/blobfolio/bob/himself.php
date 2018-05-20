@@ -177,6 +177,12 @@ class himself {
 			),
 		);
 
+		// We might actually want a different directory.
+		$parent = dirname($root_dir) . '/';
+		if (is_dir("{$parent}.git/")) {
+			$root_dir = $parent;
+		}
+
 		$ignore_dir = log::prompt("Where should the \033[2m.gitignore\033[0m be placed?", "{$root_dir}", null, true);
 		// We actually want a directory.
 		if ('.gitignore' === substr($ignore_dir, 10)) {
