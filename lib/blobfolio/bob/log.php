@@ -29,6 +29,7 @@ class log {
 	const INFO = "\033[96;1mInfo:\033[0m ";
 
 
+
 	// -----------------------------------------------------------------
 	// Main Output
 	// -----------------------------------------------------------------
@@ -73,8 +74,15 @@ class log {
 	 * @return string Answer.
 	 */
 	public static function prompt(string $message, string $default='', $set=null, bool $case=false) {
-		$pretty = '';
+		// We're using readline for input handling.
+		if (!function_exists('readline')) {
+			static::error('Missing function: readline');
+		}
+		if (!function_exists('readline_completion_function')) {
+			static::error('Missing function: readline_completion_function');
+		}
 
+		$pretty = '';
 		r_sanitize::whitespace($default);
 		if (!$case) {
 			r_mb::strtolower($default);
@@ -139,6 +147,92 @@ class log {
 			$message = "$message \033[2m($default)\033[0m";
 		}
 
+		// Set up a tab completion function!
+		readline_completion_function(function(string $str) use($set) {
+			// Add set options to pool.
+			if (is_array($set) && count($set)) {
+				return $set;
+			}
+
+			// Do file paths.
+			$dir_real = $dir_fake = '';
+
+			// String contains a directory maybe.
+			if (false !== strpos($str, '/')) {
+				$dir_real = $dir_fake = dirname($str) . '/';
+				if (!@is_dir($dir_real)) {
+					$dir_real = $dir_fake = '';
+				}
+			}
+			elseif (is_dir($str)) {
+				$dir_real = $str;
+				r_file::trailingslash($dir_real);
+				$dir_fake = $dir_real;
+			}
+			else {
+				$dir_real = getcwd();
+				r_file::trailingslash($dir_real);
+				$dir_fake = '';
+			}
+
+			// Start by prepopulating the home directory since most
+			// root-level locations will be unreadable.
+			$possible = array('/home/');
+			if ($dir_fake && !in_array($dir_fake, $possible, true)) {
+				$possible[] = $dir_fake;
+			}
+
+			// Run through locations and pull 2 levels worth of stuff.
+			$locations = $possible;
+			foreach ($locations as $dir) {
+				$tmp = @scandir($dir);
+				if (!isset($tmp[0])) {
+					continue;
+				}
+				foreach ($tmp as $v) {
+					if (('.' === $v) || ('..' === $v)) {
+						continue;
+					}
+
+					$path = "{$dir}{$v}";
+
+					// This is a directory. Slash it and recurse.
+					if (@is_dir($path)) {
+						$path = "$path/";
+						$possible[] = $path;
+
+						// Recurse one level if this dir is readable.
+						if (@is_readable($path)) {
+							$tmp2 = @scandir($path);
+							if (!isset($tmp2[0])) {
+								continue;
+							}
+							foreach ($tmp2 as $v2) {
+								if (('.' === $v) || ('..' === $v)) {
+									continue;
+								}
+
+								$path2 = "{$path}{$v2}";
+
+								// Same deal, slash paths.
+								if (@is_dir($path2)) {
+									$possible[] = "$path2/";
+								}
+								else {
+									$possible[] = $path2;
+								}
+							}
+						}
+					}
+					else {
+						$possible[] = $path;
+					}
+				}
+			}
+
+			return $possible;
+		});
+
 		$answer = '';
 		while (!$answer) {
 			// Ask it.
@@ -147,43 +241,31 @@ class log {
 				static::print($pretty);
 			}
 
-			// Answer it.
-			if ($handle = fopen('php://stdin', 'r')) {
-				// Align the response with the ++.
-				echo '      ';
+			// Load the answer.
+			$answer = readline('      ');
+			r_sanitize::whitespace($answer);
+			if (!$case) {
+				r_mb::strtolower($answer);
+			}
 
-				// Load the answer.
-				$answer = fgets($handle);
-				r_sanitize::whitespace($answer);
-				if (!$case) {
-					r_mb::strtolower($answer);
+			// Assign it to the default?
+			if (!$answer && $default) {
+				$answer = $default;
+			}
+
+			// Check answer against the set.
+			if ($answer && is_array($set)) {
+				if (false === ($key = array_search($answer, $set, true))) {
+					$answer = '';
 				}
-
-				// Assign it to the default?
-				if (!$answer && $default) {
-					$answer = $default;
-				}
-
-				// Check answer against the set.
-				if ($answer && is_array($set)) {
-					if (false === ($key = array_search($answer, $set, true))) {
-						$answer = '';
-					}
-					else {
-						$answer = $set[$key];
-					}
-				}
-
-				// Close the connection.
-				fclose($handle);
-
-				// Scold the user if they were stupid.
-				if (!$answer) {
-					static::warning('Invalid response.');
+				else {
+					$answer = $set[$key];
 				}
 			}
-			else {
-				static::error('Could not read input.');
+
+			// Scold the user if they were stupid.
+			if (!$answer) {
+				static::warning('Invalid response.');
 			}
 		}
 
