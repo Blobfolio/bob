@@ -188,7 +188,7 @@ class himself {
 			$ignore_dir = $root_dir;
 		}
 
-		io::gitignore($root_dir, $rules);
+		io::gitignore($ignore_dir, $rules);
 
 		// We're done!
 		log::success('Bob has been saved!');
