@@ -681,7 +681,10 @@ class io {
 
 					// If this isn't slashed, we need to make it globby.
 					if ($base) {
-						if (0 !== strpos($rules[$k], '/')) {
+						if (
+							(0 !== strpos($rules[$k], '/')) &&
+							(0 !== strpos($line, '**/'))
+						) {
 							$rules[$k] = "**/{$rules[$k]}";
 						}
 					}
@@ -699,13 +702,17 @@ class io {
 
 		// We always want to ignore these.
 		$rules[] = '**/*.git';
+		$rules[] = '**/.DS_Store';
 		$rules[] = '**/.sass-cache/';
 		$rules[] = '**/composer.lock';
 		$rules[] = '**/node_modules/';
 		$rules[] = '**/package-lock.json';
+		$rules[] = '**/secrets.json';
+		$rules[] = '**/wp-config.php';
 
 		// Another pattern that takes into account our mandatory rules.
-		$pattern2 = '#/(\.git|\.sass-cache|node_modules)/#';
+		$pattern2 = '#/(\.git|\.sass\-cache|node_modules)/#';
+		$pattern3 = '#(\.DS_Store|composer\.lock|package\-lock\.json|secrets\.json|wp\-config\.php)$#';
 
 		// Keep track of our ignore files as we'll be deleting these at
 		// the end.
@@ -738,7 +745,7 @@ class io {
 
 				// If this isn't slashed, we need to make it globby.
 				if ($base) {
-					if (0 !== strpos($line, '/')) {
+					if ((0 !== strpos($line, '/')) && (0 !== strpos($line, '**/'))) {
 						$line = "**/$line";
 					}
 					// Otherwise maybe strip off the base path.
@@ -757,6 +764,7 @@ class io {
 				// Check patterns one more time.
 				if (
 					!preg_match($pattern2, $rule) &&
+					!preg_match($pattern3, $rule) &&
 					!in_array("**{$rule}", $rules, true)
 				) {
 					$rules[] = $rule;
