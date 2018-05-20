@@ -20,6 +20,7 @@
         "ext-hash": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "ext-readline": "*",
         "ext-zip": "*",
         "blobfolio\/blob-common": "dev-7.0_Next",
         "blobfolio\/blob-mimes": "dev-7.0_Next",
