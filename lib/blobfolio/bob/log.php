@@ -28,6 +28,9 @@ class log {
 	const SUCCESS = "\033[32;1mSuccess:\033[0m ";
 	const INFO = "\033[96;1mInfo:\033[0m ";
 
+	// We want to print the face of Bob once and only once.
+	protected static $faced = false;
+
 
 
 	// -----------------------------------------------------------------
@@ -399,6 +402,12 @@ class log {
 	 * @return void Nothing.
 	 */
 	public static function title(string $title) {
+		// Print the face of Bob.
+		if (!static::$faced) {
+			himself::face();
+			static::$faced = true;
+		}
+
 		r_mb::strtoupper($title);
 		r_mb::trim($title);
 		r_mb::str_pad($title, static::WRAP, ' ', STR_PAD_BOTH);
