@@ -1188,6 +1188,124 @@ class io {
 		$handle->close();
 	}
 
+	/**
+	 * Unzip
+	 *
+	 * @param string $dir Source directory.
+	 * @param string $zip Zip file.
+	 * @param array $shitlist Shitlist.
+	 * @return bool True.
+	 */
+	public static function unzip(string $dir, string $zip, $shitlist=null) {
+		// We need the ZipArchive class.
+		if (!class_exists('ZipArchive')) {
+			log::error('Missing extension: ZipArchive');
+		}
+
+		// Check the source path.
+		r_file::path($dir, false);
+		if (!is_dir($dir)) {
+			v_file::mkdir($dir);
+			if (!is_dir($dir)) {
+				log::error('Invalid destination directory.');
+			}
+		}
+		r_file::trailingslash($dir);
+
+		// And the output path.
+		r_file::path($zip, true);
+		if (
+			!$zip ||
+			('.zip' !== substr(strtolower($zip), -4))
+		) {
+			log::error('Invalid zip file.');
+		}
+
+		// Open it!
+		$handle = new ZipArchive();
+		if (true !== $handle->open($zip, ZipArchive::CHECKCONS)) {
+			log::error('The zip file is corrupt.');
+		}
+
+		// First pass, build a list of directories.
+		$dirs = array();
+		for ($x = 0; $x < $handle->numFiles; ++$x) {
+			if (false === ($info = $handle->statIndex($x))) {
+				log::error('The zip file is corrupt.');
+			}
+
+			// Skip Mac nonsense.
+			if (0 === strpos($info['name'], '__MACOSX/')) {
+				continue;
+			}
+
+			// Skip shitlist.
+			if (static::is_shitlist($info['name'], $shitlist)) {
+				continue;
+			}
+
+			// If this is a directory, add it to the list as-is.
+			if ('/' === substr($info['name'], -1)) {
+				$dirs[] = v_file::path("{$dir}{$info['name']}", false);
+			}
+			// Add the basename for files.
+			elseif ('.' !== ($dirname = dirname($info['name']))) {
+				r_file::trailingslash($dirname);
+				$dirs[] = v_file::path("{$dir}{$dirname}", false);
+			}
+		}
+
+		// Make sure the directories exist.
+		$dirs = array_unique($dirs);
+		rsort($dirs);
+		foreach ($dirs as $v) {
+			if (!is_dir($v)) {
+				v_file::mkdir($v, 0755);
+				if (!is_dir($v)) {
+					log::error('The archive could not be extracted.');
+				}
+			}
+		}
+
+		// Second pass, extract the files!
+		for ($x = 0; $x < $handle->numFiles; ++$x) {
+			if (false === ($info = $handle->statIndex($x))) {
+				continue;
+			}
+
+			// Skip Mac nonsense.
+			if (0 === strpos($info['name'], '__MACOSX/')) {
+				continue;
+			}
+
+			// Skip anything ending in '/' since we already took care of
+			// all the directories.
+			if ('/' === substr($info['name'], -1)) {
+				continue;
+			}
+
+			// Skip shitlist.
+			if (static::is_shitlist($info['name'], $shitlist)) {
+				continue;
+			}
+
+			// Load it.
+			if (false === ($out = $handle->getFromIndex($x))) {
+				log::error('The archive could not be extracted.');
+			}
+
+			file_put_contents("{$dir}{$info['name']}", $out);
+			if (!is_file("{$dir}{$info['name']}")) {
+				log::error('The archive could not be extracted.');
+			}
+			chmod("{$dir}{$info['name']}", 0644);
+		}
+
+		// Close the zip.
+		$handle->close();
+		return true;
+	}
+
 	// ----------------------------------------------------------------- end packing
 
 
