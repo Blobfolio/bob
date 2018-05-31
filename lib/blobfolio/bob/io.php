@@ -1036,6 +1036,7 @@ class io {
 		$tmp = file_get_contents("{$dir}DEBIAN/control");
 		if (preg_match('/^Version:\s*([^\s]+)/m', $tmp, $match)) {
 			$version = $match[1];
+			$version = preg_replace('/^\d+:/', '', $version);
 			if (false === strpos($deb, "_{$version}.deb")) {
 				$deb = substr($deb, 0, -4) . "_{$version}.deb";
 			}
