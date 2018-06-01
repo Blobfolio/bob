@@ -418,7 +418,7 @@ class io {
 			}
 			elseif (is_file($v)) {
 				// Keep executableness, but otherwise lower perms.
-				if (is_executable($v)) {
+				if (('.sh' === substr($v, -3)) && is_executable($v)) {
 					chmod($v, 0755);
 				}
 				else {
