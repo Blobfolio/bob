@@ -34,6 +34,7 @@ class io {
 		'/composer\.(json|lock)$/',
 		'/Gruntfile\.js$/',
 		'/node_modules/',
+		'/npm_scripts/',
 		'/package(\-lock)?\.json$/',
 		'/phpcs\.ruleset\.xml$/',
 		'/phpunit/',
