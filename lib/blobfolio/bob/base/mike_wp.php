@@ -57,7 +57,8 @@ abstract class mike_wp extends mike {
 
 	// Most plugin builds run these.
 	const USE_COMPOSER = true;				// Composer.
-	const USE_GRUNT = 'build';				// A specific Grunt task.
+	const USE_GRUNT = 'build';				// A Grunt build task.
+	const USE_NPM = '';						// An NPM build script.
 	const USE_PHPAB = true;					// PHPAB.
 
 	// Some plugins need to re-namespace third-party libraries to avoid
@@ -105,6 +106,11 @@ abstract class mike_wp extends mike {
 		// Run Grunt build task.
 		if (static::USE_GRUNT) {
 			io::grunt_task(static::get_plugin_dir(), static::USE_GRUNT);
+		}
+
+		// Run NPM build task.
+		if (static::USE_NPM) {
+			io::npm_script(static::get_plugin_dir(), static::USE_NPM);
 		}
 
 		// If we're patching classes, PHPAB will get run anyway.

@@ -939,6 +939,42 @@ class io {
 	}
 
 	/**
+	 * NPM Task
+	 *
+	 * @param string $dir Directory.
+	 * @param string $task Task.
+	 * @return bool True/false.
+	 */
+	public static function npm_script(string $dir, string $task) {
+		// The directory needs to be valid.
+		r_file::path($dir, true);
+		if (!$dir || !is_dir($dir)) {
+			log::error('Invalid NPM project directory.');
+			return false;
+		}
+
+		r_mb::trim($task);
+		if (!$task) {
+			log::error('Invalid NPM task.');
+		}
+
+		// Try to install NPM.
+		if (
+			!is_dir("{$dir}node_modules") ||
+			!is_file("{$dir}package.json")
+		) {
+			log::error('NPM is not installed in this directory.');
+		}
+
+		// Try to run the command!
+		log::print("Running NPM \033[2m{$task}\033[0m…");
+		$cmd = static::get_command('npm', array("run-script -s $task"));
+		$result = static::exec($cmd, $dir);
+
+		return (false !== $result);
+	}
+
+	/**
 	 * Generate PHPAB Autoloader
 	 *
 	 * @param string $dir Directory.
