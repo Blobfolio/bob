@@ -39,6 +39,7 @@ class io {
 		'/phpcs\.ruleset\.xml$/',
 		'/phpunit/',
 		'/readme\.md$/i',
+		'stylecow\.json$',
 		'/vendor\/(autoload.php|bin|composer)/',
 		'/vendor\/.*\.(markdown|md|yml)$/',
 		'/vendor\/[^\/+]\/(build\.xml|tests?)/',
