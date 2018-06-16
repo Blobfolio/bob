@@ -410,11 +410,17 @@ class io {
 	 * Directories to 755, files to 644.
 	 *
 	 * @param string $dir Directory.
+	 * @param array $shitlist Shitlist.
 	 * @return void Nothing.
 	 */
-	public static function fix_permissions(string $dir) {
+	public static function fix_permissions(string $dir, $shitlist=null) {
 		$files = v_file::scandir($dir);
 		foreach ($files as $v) {
+			// Ignore shitlisted files; they'll go away later anyway.
+			if (static::is_shitlist($v, $shitlist)) {
+				continue;
+			}
+
 			if (is_dir($v)) {
 				chmod($v, 0755);
 			}

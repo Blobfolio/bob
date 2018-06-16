@@ -1,6 +1,6 @@
 **/.git export-ignore
 **/.gitattributes export-ignore
 **/.gitignore export-ignore
-/Gruntfile.js export-ignore
+/npm_scripts export-ignore
 /package.json export-ignore
 /README.md export-ignore

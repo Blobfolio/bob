@@ -124,7 +124,7 @@ abstract class mike_wp extends mike {
 
 		// Fix permissions.
 		log::print('Fixing permissions…');
-		io::fix_permissions(static::get_plugin_dir());
+		io::fix_permissions(static::get_plugin_dir(), static::get_shitlist());
 
 		// Extra user steps.
 		static::build_update_source();

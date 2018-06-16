@@ -1,6 +1,6 @@
 {
     "name": "blobfolio\/bob",
-    "description": "A simple release builder framework.",
+    "description": "A simple release builder framework for Blobfolio projects.",
     "version": "1.0.0",
     "type": "library",
     "homepage": "https:\/\/github.com\/Blobfolio\/bob",
