@@ -1,10 +1,29 @@
 {
   "name": "bob",
+  "license": "WTFPL",
+  "version": "1.0.0",
+  "description": "A simple release builder framework for Blobfolio projects.",
+  "homepage": "https://github.com/Blobfolio/bob",
+  "author": {
+    "name": "Josh Stoik",
+    "email": "josh@blobfolio.com",
+    "url": "https://blobfolio.com"
+  },
+  "contributors": [
+    {
+      "name": "Josh Stoik",
+      "email": "josh@blobfolio.com",
+      "url": "https://blobfolio.com"
+    }
+  ],
   "devDependencies": {
-    "grunt": "*",
-    "grunt-contrib-clean": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-notify": "*",
-    "grunt-blobfolio": "git+ssh://git@blobfolio.com:3417/grunt-blobfolio"
+    "blobfolio-phpcs": "git+ssh://git@blobfolio.com:3417/blobfolio-phpcs",
+    "onchange": "*"
+  },
+  "scripts": {
+    "watch": "onchange '*.php' '**/*.php' -- npm run -s php",
+    "libs:clean": "npm_scripts/libs-clean.sh",
+    "php": "npm_scripts/php.sh",
+    "php:fix": "npm_scripts/php-fix.sh"
   }
 }
