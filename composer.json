@@ -22,10 +22,9 @@
         "ext-mbstring": "*",
         "ext-readline": "*",
         "ext-zip": "*",
-        "blobfolio\/blob-common": "dev-7.0_Next",
-        "blobfolio\/blob-mimes": "dev-7.0_Next",
-        "blobfolio\/blob-phone": "dev-7.0_Next",
-        "blobfolio\/blob-domain": "dev-7.0_Next"
+        "blobfolio\/blob-common": "*",
+        "blobfolio\/blob-mimes": "*",
+        "blobfolio\/blob-domain": "*"
     },
     "config": {
         "vendor-dir": "lib\/vendor",
